@@ -1,0 +1,155 @@
+// Переменные и миксины доступны глобально через vite.config.ts
+
+.crm-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--border-radius-medium, 8px);
+  font-weight: var(--font-weight-medium, 500);
+  cursor: pointer;
+  transition: var(--transition-base, all 0.2s ease);
+  position: relative;
+  gap: 8px;
+  padding: var(--padding-md, 12px) var(--padding-lg, 16px);
+  font-size: var(--font-size-md, 16px);
+  line-height: 1.5;
+  text-decoration: none;
+  font-family: var(--font-family-base, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif);
+
+  &_type_button {
+    @include reset-button;
+  }
+
+  &_type_submit {
+    @include reset-button;
+  }
+
+  &_type_reset {
+    @include reset-button;
+  }
+
+  &_view {
+    &_primary {
+      background-color: var(--color-primary, #007bff);
+      color: var(--color-text-inverse, white);
+
+      &:hover:not(.crm-button_disabled):not(.crm-button_loading) {
+        background-color: var(--color-primary-hover, #0056b3);
+      }
+
+      &:active:not(.crm-button_disabled):not(.crm-button_loading) {
+        background-color: var(--color-primary-pressed, #004494);
+      }
+    }
+
+    &_secondary {
+      background-color: var(--color-secondary, #6c757d);
+      color: var(--color-text-inverse, white);
+
+      &:hover:not(.crm-button_disabled):not(.crm-button_loading) {
+        background-color: var(--color-secondary-hover, #5a6268);
+      }
+
+      &:active:not(.crm-button_disabled):not(.crm-button_loading) {
+        background-color: var(--color-secondary-pressed, #545b62);
+      }
+    }
+
+    &_danger {
+      background-color: var(--color-danger, #dc3545);
+      color: var(--color-text-inverse, white);
+
+      &:hover:not(.crm-button_disabled):not(.crm-button_loading) {
+        background-color: var(--color-danger-hover, #c82333);
+      }
+
+      &:active:not(.crm-button_disabled):not(.crm-button_loading) {
+        background-color: var(--color-danger-pressed, #bd2130);
+      }
+    }
+
+    &_outline {
+      background-color: transparent;
+      color: var(--color-primary, #007bff);
+      border: 1px solid var(--color-primary, #007bff);
+
+      &:hover:not(.crm-button_disabled):not(.crm-button_loading) {
+        background-color: var(--color-bg-hover, #f8f9fa);
+      }
+
+      &:active:not(.crm-button_disabled):not(.crm-button_loading) {
+        background-color: var(--color-bg-pressed, #e2e6ea);
+      }
+    }
+  }
+
+  &_size {
+    &_small {
+      padding: var(--padding-xs, 6px) var(--padding-sm, 8px);
+      font-size: var(--font-size-sm, 14px);
+    }
+
+    &_medium {
+      padding: var(--padding-md, 12px) var(--padding-lg, 16px);
+      font-size: var(--font-size-md, 16px);
+    }
+
+    &_large {
+      padding: var(--padding-lg, 16px) var(--padding-xl, 20px);
+      font-size: var(--font-size-lg, 18px);
+    }
+  }
+
+  &_disabled {
+    @include disabled;
+  }
+
+  &_loading {
+    pointer-events: none;
+  }
+
+  &__content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__loading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+
+    .crm-button_size_small & {
+      width: 12px;
+      height: 12px;
+    }
+
+    .crm-button_size_large & {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  &__loading-text {
+    font-size: var(--font-size-sm, 14px);
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+}

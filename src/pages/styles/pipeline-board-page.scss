@@ -1,0 +1,43 @@
+.crm-pipeline-board {
+  padding: var(--crm-spacing-lg);
+  max-width: var(--crm-max-width);
+  margin: 0 auto;
+  font-family: var(--crm-font-family);
+  background-color: var(--crm-bg-primary);
+  min-height: 100vh;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--crm-spacing-lg);
+  }
+
+  &__title {
+    margin: 0;
+    font-size: var(--crm-font-size-xl);
+    color: var(--crm-color-text-primary);
+    font-weight: var(--crm-font-weight-bold);
+  }
+
+  &__actions {
+    display: flex;
+    gap: var(--crm-spacing-md);
+  }
+
+  &__loading,
+  &__error {
+    text-align: center;
+    padding: calc(var(--crm-spacing-xl) * 2);
+    font-size: var(--crm-font-size-lg);
+    color: var(--crm-color-text-muted);
+  }
+
+  &__error {
+    color: var(--crm-color-danger);
+  }
+
+  &__content {
+    height: calc(100vh - 200px);
+  }
+}

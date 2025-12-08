@@ -1,0 +1,138 @@
+// Миксины для стилей
+
+// Центрирование элемента
+@mixin center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// Абсолютное позиционирование по центру
+@mixin centered-position {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+// Текст с ограничением по строкам
+@mixin truncate-text($lines: 1) {
+  @if $lines == 1 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  } @else {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+// Транзиция
+@mixin transition($properties...) {
+  @if length($properties) > 0 {
+    transition: $properties;
+  } @else {
+    transition: all 0.2s ease;
+  }
+}
+
+// Фокус
+@mixin focus {
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+// Состояние disabled
+@mixin disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+// Сброс стилей списка
+@mixin reset-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+// Сброс стилей кнопки
+@mixin reset-button {
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  outline: none;
+}
+
+// Сброс стилей input
+@mixin reset-input {
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  outline: none;
+  box-sizing: border-box;
+}
+
+// Блок/элемент/модификатор (БЭМ)
+@mixin block($name) {
+  .#{$name} {
+    @content;
+  }
+}
+
+@mixin element($name) {
+  &__#{$name} {
+    @content;
+  }
+}
+
+@mixin modifier($name) {
+  &--#{$name} {
+    @content;
+  }
+}
+
+// Удаляем дублирующийся миксин
+
+// Адаптивность
+@mixin media-breakpoint-up($name, $breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px
+)) {
+  $min: map-get($breakpoints, $name);
+  @if $min != 0 {
+    @media (min-width: $min) {
+      @content;
+    }
+  } @else {
+    @content;
+  }
+}
+
+@mixin media-breakpoint-down($name, $breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px
+)) {
+  $max: map-get($breakpoints, $name) - 0.02px;
+  @if $name != xs {
+    @media (max-width: $max) {
+      @content;
+    }
+  } @else {
+    @content;
+  }
+}

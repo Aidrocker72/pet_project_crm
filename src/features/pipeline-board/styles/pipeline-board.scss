@@ -1,0 +1,186 @@
+.crm-pipeline-board {
+  padding: var(--crm-spacing-lg);
+  height: 100%;
+  display: flex;
+ flex-direction: column;
+  font-family: var(--crm-font-family);
+  background-color: var(--crm-bg-primary);
+}
+
+.crm-pipeline-board__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--crm-spacing-lg);
+}
+
+.crm-pipeline-board__title {
+  margin: 0;
+  font-size: var(--crm-font-size-xl);
+  font-weight: var(--crm-font-weight-bold);
+ color: var(--crm-color-text-primary);
+}
+
+.crm-pipeline-board__loading,
+.crm-pipeline-board__error {
+  padding: var(--crm-spacing-lg);
+  text-align: center;
+  font-size: var(--crm-font-size-base);
+  color: var(--crm-color-text-muted);
+}
+
+.crm-pipeline-board__error {
+  color: var(--crm-color-danger);
+}
+
+.crm-pipeline-board__content {
+  flex: 1;
+  overflow-x: auto;
+}
+
+.crm-pipeline-board__stages {
+  display: flex;
+  gap: var(--crm-spacing-lg);
+  min-width: fit-content;
+}
+
+.crm-pipeline-board__stage {
+  min-width: var(--crm-pipeline-stage-min-width);
+  background-color: var(--crm-bg-secondary);
+  border-radius: var(--crm-border-radius);
+  box-shadow: var(--crm-shadow-sm);
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+}
+
+.crm-pipeline-board__stage-header {
+  padding: var(--crm-spacing-md);
+  background-color: var(--crm-bg-tertiary);
+  border-top-left-radius: var(--crm-border-radius);
+  border-top-right-radius: var(--crm-border-radius);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.crm-pipeline-board__stage-title {
+  margin: 0;
+  font-size: var(--crm-font-size-lg);
+  font-weight: var(--crm-font-weight-semibold);
+  color: var(--crm-color-text-secondary);
+}
+
+.crm-pipeline-board__stage-count {
+  background-color: var(--crm-color-primary);
+  color: var(--crm-color-white);
+  border-radius: var(--crm-border-radius-pill);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--crm-font-size-xs);
+}
+
+.crm-pipeline-board__stage-content {
+  padding: var(--crm-spacing-md);
+  min-height: var(--crm-pipeline-stage-min-height);
+  flex: 1;
+  position: relative;
+}
+
+.crm-pipeline-board__deal-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--crm-spacing-md);
+  min-height: var(--crm-pipeline-stage-min-height);
+}
+
+.crm-pipeline-board__deal {
+  background-color: var(--crm-color-white);
+  border-radius: var(--crm-border-radius);
+  padding: var(--crm-spacing-md);
+  margin-bottom: var(--crm-spacing-md);
+  box-shadow: var(--crm-shadow-sm);
+  cursor: grab;
+  transition: var(--crm-transition-speed);
+  border-left: 4px solid var(--crm-color-primary);
+
+  &:hover {
+    box-shadow: var(--crm-shadow-md);
+    transform: translateY(-2px);
+  }
+
+  &--dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+    transform: scale(0.98);
+  }
+}
+
+.crm-pipeline-board__deal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--crm-spacing-sm);
+}
+
+.crm-pipeline-board__deal-title {
+  margin: 0;
+  font-size: var(--crm-font-size-lg);
+  font-weight: var(--crm-font-weight-medium);
+  color: var(--crm-color-text-primary);
+  flex: 1;
+  margin-right: var(--crm-spacing-xs);
+}
+
+.crm-pipeline-board__deal-value {
+  font-weight: var(--crm-font-weight-bold);
+ color: var(--crm-color-success);
+  white-space: nowrap;
+}
+
+.crm-pipeline-board__deal-customer {
+  font-size: var(--crm-font-size-base);
+  color: var(--crm-color-text-secondary);
+  margin-bottom: var(--crm-spacing-sm);
+}
+
+.crm-pipeline-board__deal-probability {
+  position: relative;
+  height: var(--crm-probability-bar-height);
+  background-color: var(--crm-bg-tertiary);
+  border-radius: calc(var(--crm-probability-bar-height) / 2);
+  overflow: hidden;
+}
+
+.crm-pipeline-board__probability-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: var(--crm-color-success);
+  transition: var(--crm-transition-speed);
+}
+
+.crm-pipeline-board__probability-text {
+  position: relative;
+  z-index: 1;
+  font-size: var(--crm-font-size-xs);
+  color: var(--crm-color-text-secondary);
+  padding: 0 var(--crm-spacing-xs);
+  line-height: var(--crm-probability-bar-height);
+  font-weight: var(--crm-font-weight-medium);
+}
+
+.crm-pipeline-board__empty-stage {
+  text-align: center;
+  color: var(--crm-color-text-muted);
+  font-style: italic;
+  padding: var(--crm-spacing-lg) 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
