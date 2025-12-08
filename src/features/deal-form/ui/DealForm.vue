@@ -218,9 +218,13 @@ const customers = computed(() => customerStore.allCustomers);
 const pipelines = computed(() => pipelineStore.allPipelines);
 
 const currentPipelineStages = computed<PipelineStage[]>(() => {
-  if (!props.initialData?.pipelineId) return [];
+ // Определяем ID воронки: из начальных данных или автоматически, если доступна только одна воронка
+ const pipelineId = props.initialData?.pipelineId ||
+                    (pipelines.value.length === 1 ? pipelines.value[0]?.id : null);
 
-  const pipeline = pipelineStore.pipelineById(props.initialData.pipelineId);
+  if (!pipelineId) return [];
+
+  const pipeline = pipelineStore.pipelineById(pipelineId);
   return pipeline ? pipeline.stages : [];
 });
 
@@ -229,7 +233,11 @@ const dealSchema = yup.object({
   title: yup.string().required('Название обязательно').min(2, 'Название должно содержать не менее 2 символов'),
   description: yup.string(),
   customerId: yup.string().required('Клиент обязателен'),
-  pipelineId: yup.string().required('Воронка обязательна'),
+  pipelineId: yup.string().when([], {
+    is: () => pipelines.value.length > 1,
+    then: (schema) => schema.required('Воронка обязательна'),
+    otherwise: (schema) => schema,
+  }),
   stageId: yup.string().required('Этап обязателен'),
   value: yup.number().positive('Сумма должна быть положительной').required('Сумма обязательна'),
   probability: yup.number().min(0, 'Вероятность не может быть меньше 0').max(100, 'Вероятность не может быть больше 100').required('Вероятность обязательна'),
@@ -258,7 +266,7 @@ const initialFormData = computed(() => {
     title: '',
     description: undefined,
     customerId: '',
-    pipelineId: '',
+    pipelineId: pipelines.value.length === 1 ? (pipelines.value[0]?.id || '') : '',
     stageId: '',
     value: 0,
     probability: 0,
@@ -278,21 +286,27 @@ const onSubmit = (values: any) => {
   isSubmitting.value = true;
 
   try {
+    // Убедимся, что pipelineId установлен, если он не был выбран пользователем
+    const formData = {
+      ...values,
+      pipelineId: values.pipelineId || (pipelines.value.length === 1 ? pipelines.value[0]?.id : '')
+    };
+
     if (isEdit.value && props.initialData?.id) {
       // For edit, include the ID in the partial update
       const updateData = {
-        ...values,
+        ...formData,
         id: props.initialData.id
       } as Partial<Deal> & { id: string };
       emit('submit', updateData);
     } else {
       // For create, exclude ID
       const createData = {
-        ...values
+        ...formData
       } as Omit<Deal, 'id' | 'createdAt' | 'updatedAt'>;
       emit('submit', createData);
     }
-  } catch (error) {
+ } catch (error) {
     console.error('Error submitting form:', error);
   } finally {
     isSubmitting.value = false;
