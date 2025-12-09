@@ -1,13 +1,11 @@
-// Константы для API
 export const API_CONSTANTS = {
   CUSTOMER_STORAGE_KEY: 'crm_customers_data',
   DEAL_STORAGE_KEY: 'crm_deals_data',
   PIPELINE_STORAGE_KEY: 'crm_pipelines_data',
 
   DEFAULT_PAGINATION_LIMIT: 20,
-  MAX_FILE_SIZE: 5 * 1024 * 1024, // 5MB in bytes
+  MAX_FILE_SIZE: 5 * 1024 * 1024,
 
-  // HTTP Status Codes
   HTTP_STATUS: {
     OK: 200,
     CREATED: 201,
@@ -19,7 +17,6 @@ export const API_CONSTANTS = {
     INTERNAL_SERVER_ERROR: 500
   },
 
-  // Validation patterns
   PATTERNS: {
     EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
     PHONE: /^\+?[\d\s\-\(\)]+$/,
@@ -28,7 +25,6 @@ export const API_CONSTANTS = {
     NAME: /^[a-zA-Zа-яА-ЯёЁ\s\-']+$/,
   },
 
-  // Error messages
   ERROR_MESSAGES: {
     REQUIRED_FIELD: 'This field is required',
     INVALID_EMAIL: 'Please enter a valid email address',
@@ -39,7 +35,6 @@ export const API_CONSTANTS = {
   }
 };
 
-// Начальные данные для инициализации
 export const INITIAL_DATA = {
   CUSTOMERS: [
     {

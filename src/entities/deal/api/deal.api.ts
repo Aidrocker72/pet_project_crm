@@ -1,5 +1,5 @@
 import type { Deal } from '@/shared';
-import { API_CONSTANTS } from '@/shared/constants/api.constants';
+import { API_CONSTANTS } from '@/constants/api.constants';
 import { getFromLocalStorage, saveToLocalStorage, LOCAL_STORAGE_KEYS } from '@/shared/storage/local-storage.util';
 
 // Моковая реализация API для Deal

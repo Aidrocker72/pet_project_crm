@@ -1,5 +1,5 @@
 import type { Customer, Deal, Pipeline } from '@/shared';
-import { API_CONSTANTS } from '@/shared/constants/api.constants';
+import { API_CONSTANTS } from '@/constants/api.constants';
 
 /**
  * Утилиты для валидации данных
