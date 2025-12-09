@@ -1,5 +1,6 @@
 import type { Customer, Deal, Pipeline } from '@/shared';
-import { API_CONSTANTS } from '@/constants/api.constants';
+import { VALIDATION_PATTERNS } from '@/constants/validation-patterns';
+import { ERROR_MESSAGES } from '@/constants/error-messages';
 
 /**
  * Утилиты для валидации данных
@@ -12,17 +13,17 @@ export const validationUtils = {
     const errors: string[] = [];
 
     if (!data.name || data.name.trim().length === 0) {
-      errors.push(API_CONSTANTS.ERROR_MESSAGES.REQUIRED_FIELD);
+      errors.push(ERROR_MESSAGES.REQUIRED_FIELD);
     }
 
     if (!data.email || data.email.trim().length === 0) {
-      errors.push(API_CONSTANTS.ERROR_MESSAGES.REQUIRED_FIELD);
-    } else if (!API_CONSTANTS.PATTERNS.EMAIL.test(data.email)) {
-      errors.push(API_CONSTANTS.ERROR_MESSAGES.INVALID_EMAIL);
+      errors.push(ERROR_MESSAGES.REQUIRED_FIELD);
+    } else if (!VALIDATION_PATTERNS.EMAIL.test(data.email)) {
+      errors.push(ERROR_MESSAGES.INVALID_EMAIL);
     }
 
-    if (data.phone && data.phone.trim().length > 0 && !API_CONSTANTS.PATTERNS.PHONE.test(data.phone)) {
-      errors.push(API_CONSTANTS.ERROR_MESSAGES.INVALID_PHONE);
+    if (data.phone && data.phone.trim().length > 0 && !VALIDATION_PATTERNS.PHONE.test(data.phone)) {
+      errors.push(ERROR_MESSAGES.INVALID_PHONE);
     }
 
     return {
@@ -38,7 +39,7 @@ export const validationUtils = {
     const errors: string[] = [];
 
     if (!data.title || data.title.trim().length === 0) {
-      errors.push(API_CONSTANTS.ERROR_MESSAGES.REQUIRED_FIELD);
+      errors.push(ERROR_MESSAGES.REQUIRED_FIELD);
     }
 
     if (!data.customerId || data.customerId.trim().length === 0) {
@@ -74,7 +75,7 @@ export const validationUtils = {
     const errors: string[] = [];
 
     if (!data.name || data.name.trim().length === 0) {
-      errors.push(API_CONSTANTS.ERROR_MESSAGES.REQUIRED_FIELD);
+      errors.push(ERROR_MESSAGES.REQUIRED_FIELD);
     }
 
     if (data.stages) {
@@ -96,21 +97,21 @@ export const validationUtils = {
    * Проверка email
    */
   isEmailValid(email: string): boolean {
-    return API_CONSTANTS.PATTERNS.EMAIL.test(email);
+    return VALIDATION_PATTERNS.EMAIL.test(email);
   },
 
   /**
    * Проверка телефона
    */
   isPhoneValid(phone: string): boolean {
-    return API_CONSTANTS.PATTERNS.PHONE.test(phone);
+    return VALIDATION_PATTERNS.PHONE.test(phone);
   },
 
   /**
    * Проверка URL
    */
   isUrlValid(url: string): boolean {
-    return API_CONSTANTS.PATTERNS.URL.test(url);
+    return VALIDATION_PATTERNS.URL.test(url);
   },
 
   /**

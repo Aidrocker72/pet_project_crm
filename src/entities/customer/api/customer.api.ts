@@ -1,4 +1,4 @@
-import { INITIAL_DATA } from '@/constants/api.constants';
+import { INITIAL_DATA } from '@/constants/initial-data';
 import type { Customer } from '@/shared';
 import { getFromLocalStorage, saveToLocalStorage, LOCAL_STORAGE_KEYS } from '@/shared/storage/local-storage.util';
 

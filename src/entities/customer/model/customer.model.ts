@@ -23,7 +23,6 @@ export class CustomerModel implements Customer {
     this.updatedAt = data.updatedAt || new Date().toISOString();
   }
 
-  // Методы для работы с моделью
   static validate(customer: Customer): boolean {
     return !!customer.name && !!customer.email;
   }

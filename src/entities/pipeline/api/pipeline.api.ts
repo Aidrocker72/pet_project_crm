@@ -1,5 +1,5 @@
 import type { Pipeline } from '@/shared';
-import { INITIAL_DATA,  } from '@/constants/api.constants';
+import { INITIAL_DATA,  } from '@/constants/initial-data';
 import { getFromLocalStorage, saveToLocalStorage, LOCAL_STORAGE_KEYS } from '@/shared/storage/local-storage.util';
 
 // Моковая реализация API для Pipeline
