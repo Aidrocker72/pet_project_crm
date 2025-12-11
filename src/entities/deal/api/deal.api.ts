@@ -92,7 +92,7 @@ class DealApi {
     }
 
     this.deals.push(newDeal as Deal);
-    this.saveToStorage(); // Сохраняем в localStorage
+    this.saveToStorage();
     return newDeal as Deal;
   }
 
