@@ -1,4 +1,4 @@
-import { getFromLocalStorage, saveToLocalStorage } from '@/shared/storage/local-storage.util';
+import { getFromLocalStorage, saveToLocalStorage } from '@/utils/local-storage.util';
 import { INITIAL_DATA } from '@/constants/initial-data';
 import { LOCAL_STORAGE_KEYS } from '@/constants/local-storage-keys';
 import type { IDeal } from '@/interfaces/IDeal';

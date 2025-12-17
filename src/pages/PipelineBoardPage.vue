@@ -5,5 +5,5 @@
 </template>
 
 <script setup lang="ts">
-import PipelineBoard from '@/features/pipeline-board/ui/PipelineBoard.vue'
+import PipelineBoard from '@/components/PipelineBoard.vue'
 </script>

@@ -51,7 +51,6 @@ const attrs = useAttrs();
 
 function handleInput(event: Event) {
   const target = event.target as HTMLInputElement;
-  console.log(target.value)
   emit('update:modelValue', target.value);
 }
 

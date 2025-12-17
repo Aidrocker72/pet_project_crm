@@ -1,5 +1,5 @@
 import { INITIAL_DATA,  } from '@/constants/initial-data';
-import { getFromLocalStorage, saveToLocalStorage } from '@/shared/storage/local-storage.util';
+import { getFromLocalStorage, saveToLocalStorage } from '@/utils/local-storage.util';
 import { LOCAL_STORAGE_KEYS } from '@/constants/local-storage-keys';
 import type { IPipeline } from '@/interfaces/IPipeline';
 

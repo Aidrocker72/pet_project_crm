@@ -1,7 +1,7 @@
 import { INITIAL_DATA } from '@/constants/initial-data';
 import { LOCAL_STORAGE_KEYS } from '@/constants/local-storage-keys';
 import type { ICustomer } from '@/interfaces/ICustomer';
-import { getFromLocalStorage, saveToLocalStorage } from '@/shared/storage/local-storage.util';
+import { getFromLocalStorage, saveToLocalStorage } from '@/utils/local-storage.util';
 
 class CustomerApi {
 

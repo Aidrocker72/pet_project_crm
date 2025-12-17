@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import { DealModel } from '@/entities/deal/model/deal.model';
-import { dealApi } from '@/entities/deal/api/deal.api';
+import { DealModel } from '@/class/models/deal.model';
+import { dealApi } from '@/api/deal.api';
 import type { IDealState } from '@/interfaces/store/IDealState';
 import type { IDeal } from '@/interfaces/IDeal';
 

@@ -70,9 +70,9 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watchEffect, watch } from 'vue';
-import { useDealStore } from '@/entities/deal/store/deal.store';
-import { useCustomerStore } from '@/entities/customer/store/customer.store';
-import { usePipelineStore } from '@/entities/pipeline/store/pipeline.store';
+import { useDealStore } from '@/store/deal.store';
+import { useCustomerStore } from '@/store/customer.store';
+import { usePipelineStore } from '@/store/pipeline.store';
 import draggable from 'vuedraggable';
 import type { IDeal } from '@/interfaces/IDeal';
 

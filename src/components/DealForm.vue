@@ -186,10 +186,10 @@
 import { ref, computed} from 'vue';
 import { Form, Field, ErrorMessage, useForm } from 'vee-validate';
 import * as yup from 'yup';
-import { useCustomerStore } from '@/entities/customer/store/customer.store';
-import { usePipelineStore } from '@/entities/pipeline/store/pipeline.store';
-import Input from '@/shared/ui/Input.vue';
-import Button from '@/shared/ui/Button.vue';
+import { useCustomerStore } from '@/store/customer.store';
+import { usePipelineStore } from '@/store/pipeline.store';
+import Input from '@/components/ui/Input.vue';
+import Button from '@/components/ui/Button.vue';
 import type { IDeal } from '@/interfaces/IDeal';
 import type { IPipelineStage } from '@/interfaces/IPipelineStage';
 

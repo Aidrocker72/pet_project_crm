@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import { CustomerModel } from '@/entities/customer/model/customer.model';
-import { customerApi } from '@/entities/customer/api/customer.api';
+import { CustomerModel } from '@/class/models/customer.model';
+import { customerApi } from '@/api/customer.api';
 import type { ICustomerState } from '@/interfaces/store/ICustomerState';
 import type { ICustomer } from '@/interfaces/ICustomer';
 

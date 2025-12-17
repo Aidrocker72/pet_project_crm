@@ -131,9 +131,9 @@
 import { ref, computed, watch } from 'vue';
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
-import { useCustomerStore } from '@/entities/customer/store/customer.store';
-import Input from '@/shared/ui/Input.vue';
-import Button from '@/shared/ui/Button.vue';
+import { useCustomerStore } from '@/store/customer.store';
+import Input from '@/components/ui/Input.vue';
+import Button from '@/components/ui/Button.vue';
 import type { ICustomerFormProps } from '@/interfaces/props/ICustomerFormProps';
 import type { ICustomerFormEmits } from '@/interfaces/emits/ICustomerFormEmits';
 import type { ICustomer } from '@/interfaces/ICustomer';

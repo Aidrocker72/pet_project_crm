@@ -67,11 +67,11 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { useCustomerStore } from '@/entities/customer/store/customer.store';
-import Button from '@/shared/ui/Button.vue';
-import Input from '@/shared/ui/Input.vue';
-import Modal from '@/shared/ui/Modal.vue';
-import CustomerForm from '@/features/customer-form/ui/CustomerForm.vue';
+import { useCustomerStore } from '@/store/customer.store';
+import Button from '@/components/ui/Button.vue';
+import Input from '@/components/ui/Input.vue';
+import Modal from '@/components/ui/Modal.vue';
+import CustomerForm from '@/components/CustomerForm.vue';
 import type { ICustomer } from '@/interfaces/ICustomer';
 
 const customerStore = useCustomerStore();

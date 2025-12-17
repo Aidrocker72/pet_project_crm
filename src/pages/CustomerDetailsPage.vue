@@ -89,11 +89,11 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { useCustomerStore } from '@/entities/customer/store/customer.store';
-import { useDealStore } from '@/entities/deal/store/deal.store';
-import Button from '@/shared/ui/Button.vue';
-import Modal from '@/shared/ui/Modal.vue';
-import CustomerForm from '@/features/customer-form/ui/CustomerForm.vue';
+import { useCustomerStore } from '@/store/customer.store';
+import { useDealStore } from '@/store/deal.store';
+import Button from '@/components/ui/Button.vue';
+import Modal from '@/components/ui/Modal.vue';
+import CustomerForm from '@/components/CustomerForm.vue';
 import type { ICustomer } from '@/interfaces/ICustomer';
 
 const customerStore = useCustomerStore();

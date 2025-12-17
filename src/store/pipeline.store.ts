@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import { PipelineModel } from '@/entities/pipeline/model/pipeline.model';
-import { pipelineApi } from '@/entities/pipeline/api/pipeline.api';
+import { PipelineModel } from '@/class/models/pipeline.model';
+import { pipelineApi } from '@/api/pipeline.api';
 import type { IPipelineState } from '@/interfaces/store/IPipelineState';
 import type { IPipeline } from '@/interfaces/IPipeline';
 
