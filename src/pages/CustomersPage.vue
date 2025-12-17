@@ -68,22 +68,19 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useCustomerStore } from '@/entities/customer/store/customer.store';
-import type { Customer } from '@/shared';
 import Button from '@/shared/ui/Button.vue';
 import Input from '@/shared/ui/Input.vue';
 import Modal from '@/shared/ui/Modal.vue';
 import CustomerForm from '@/features/customer-form/ui/CustomerForm.vue';
+import type { ICustomer } from '@/interfaces/ICustomer';
 
-// Stores
 const customerStore = useCustomerStore();
 const router = useRouter();
 
-// State
 const showCustomerModal = ref(false);
 const searchQuery = ref('');
-const editingCustomer = ref<Customer | null>(null);
+const editingCustomer = ref<ICustomer | null>(null);
 
-// Computed properties
 const customers = computed(() => customerStore.allCustomers);
 const loading = computed(() => customerStore.isLoading);
 const error = computed(() => customerStore.error);
@@ -104,12 +101,11 @@ const filteredCustomers = computed(() => {
   );
 });
 
-// Methods
 const goToCustomerDetails = (id: string) => {
   router.push(`/customers/${id}`);
 };
 
-const editCustomer = (customer: Customer) => {
+const editCustomer = (customer: ICustomer) => {
   console.log(customer)
   editingCustomer.value = customer;
   showCustomerModal.value = true;
@@ -124,15 +120,13 @@ const deleteCustomer = async (id: string) => {
  }
 };
 
-const handleCustomerSubmit = async (customerData: Omit<Customer, 'id' | 'createdAt' | 'updatedAt'> | Partial<Customer>) => {
+const handleCustomerSubmit = async (customerData: Omit<ICustomer, 'id' | 'createdAt' | 'updatedAt'> | Partial<ICustomer>) => {
   let result;
 
   if (isEditing.value && editingCustomer.value?.id) {
-    // Update existing customer
-    result = await customerStore.updateCustomer(editingCustomer.value.id, customerData as Partial<Customer>);
+    result = await customerStore.updateCustomer(editingCustomer.value.id, customerData as Partial<ICustomer>);
   } else {
-    // Create new customer
-    result = await customerStore.createCustomer(customerData as Omit<Customer, 'id' | 'createdAt' | 'updatedAt'>);
+    result = await customerStore.createCustomer(customerData as Omit<ICustomer, 'id' | 'createdAt' | 'updatedAt'>);
   }
 
   if (result) {
@@ -147,7 +141,6 @@ const closeCustomerModal = () => {
   editingCustomer.value = null;
 };
 
-// Initialize data
 onMounted(() => {
   customerStore.fetchCustomers();
 });

@@ -186,19 +186,20 @@
 import { ref, computed} from 'vue';
 import { Form, Field, ErrorMessage, useForm } from 'vee-validate';
 import * as yup from 'yup';
-import type { Deal, PipelineStage } from '@/shared';
 import { useCustomerStore } from '@/entities/customer/store/customer.store';
 import { usePipelineStore } from '@/entities/pipeline/store/pipeline.store';
 import Input from '@/shared/ui/Input.vue';
 import Button from '@/shared/ui/Button.vue';
+import type { IDeal } from '@/interfaces/IDeal';
+import type { IPipelineStage } from '@/interfaces/IPipelineStage';
 
 interface DealFormEmits {
-  submit: [deal: Omit<Deal, 'id' | 'createdAt' | 'updatedAt'> | Partial<Deal>];
+  submit: [deal: Omit<IDeal, 'id' | 'createdAt' | 'updatedAt'> | Partial<IDeal>];
   cancel: [];
 }
 
 interface DealFormProps {
-  initialData?: Deal | null;
+  initialData?: IDeal | null;
 }
 
 const props = withDefaults(defineProps<DealFormProps>(), {
@@ -217,7 +218,7 @@ const pipelineStore = usePipelineStore();
 const customers = computed(() => customerStore.allCustomers);
 const pipelines = computed(() => pipelineStore.allPipelines);
 
-const currentPipelineStages = computed<PipelineStage[]>(() => {
+const currentPipelineStages = computed<IPipelineStage[]>(() => {
  // Определяем ID воронки: из начальных данных или автоматически, если доступна только одна воронка
  const pipelineId = props.initialData?.pipelineId ||
                     (pipelines.value.length === 1 ? pipelines.value[0]?.id : null);
@@ -297,13 +298,13 @@ const onSubmit = (values: any) => {
       const updateData = {
         ...formData,
         id: props.initialData.id
-      } as Partial<Deal> & { id: string };
+      } as Partial<IDeal> & { id: string };
       emit('submit', updateData);
     } else {
       // For create, exclude ID
       const createData = {
         ...formData
-      } as Omit<Deal, 'id' | 'createdAt' | 'updatedAt'>;
+      } as Omit<IDeal, 'id' | 'createdAt' | 'updatedAt'>;
       emit('submit', createData);
     }
  } catch (error) {

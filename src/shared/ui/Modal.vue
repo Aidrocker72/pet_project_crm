@@ -37,30 +37,19 @@
 </template>
 
 <script setup lang="ts">
+import type { IModalEmits } from '@/interfaces/emits/ui/IModalEmits';
+import type { IModalProps } from '@/interfaces/props/ui/IModalProps';
 import { onMounted, onUnmounted, watch } from 'vue';
 
-// Props and emits definitions
-export interface ModalProps {
-  isOpen: boolean;
-  title?: string;
- size?: 'small' | 'medium' | 'large' | 'full';
-  closeOnOverlayClick?: boolean;
-  closeOnEsc?: boolean;
-  closeButtonLabel?: string;
-}
-
-const props = withDefaults(defineProps<ModalProps>(), {
+const props = withDefaults(defineProps<IModalProps>(), {
   size: 'medium',
   closeOnOverlayClick: true,
   closeOnEsc: true,
  closeButtonLabel: 'Закрыть модальное окно'
 });
 
-const emit = defineEmits<{
-  'update:isOpen': [value: boolean];
-}>();
+const emit = defineEmits<IModalEmits>();
 
-// Prevent body scroll when modal is open
 watch(() => props.isOpen, (isOpen) => {
   if (isOpen) {
     document.body.style.overflow = 'hidden';
@@ -86,25 +75,21 @@ const handleEscKey = (event: KeyboardEvent) => {
 };
 
 onUnmounted(() => {
-  // Restore body scroll on unmount
   document.body.style.overflow = '';
 });
 
-// Add mounted lifecycle hook for keyboard event listener
 onMounted(() => {
   if (props.closeOnEsc) {
     window.addEventListener('keydown', handleEscKey);
   }
 });
 
-// Remove keyboard event listener on unmount
 onUnmounted(() => {
   window.removeEventListener('keydown', handleEscKey);
 });
 </script>
 
 <style scoped>
-/* Prevent body scroll when modal is open */
 :root {
   --scrollbar-width: 0px;
 }
@@ -122,7 +107,6 @@ onUnmounted(() => {
   z-index: 1000;
   padding: 20px;
   box-sizing: border-box;
-  /* Prevent scrolling when modal is open */
   overflow: hidden;
 }
 

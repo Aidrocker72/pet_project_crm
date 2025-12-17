@@ -1,25 +1,18 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import type { Customer } from '@/shared';
 import { CustomerModel } from '@/entities/customer/model/customer.model';
 import { customerApi } from '@/entities/customer/api/customer.api';
-
-interface CustomerState {
-  customers: Customer[];
-  loading: boolean;
-  error: string | null;
-  currentCustomer: Customer | null;
-}
+import type { ICustomerState } from '@/interfaces/store/ICustomerState';
+import type { ICustomer } from '@/interfaces/ICustomer';
 
 export const useCustomerStore = defineStore('customer', () => {
-  const state = ref<CustomerState>({
+  const state = ref<ICustomerState>({
     customers: [],
     loading: false,
     error: null,
     currentCustomer: null
   });
 
-  // Getters
   const allCustomers = computed(() => state.value.customers);
   const customerById = computed(() => (id: string) =>
     state.value.customers.find(customer => customer.id === id)
@@ -28,21 +21,17 @@ export const useCustomerStore = defineStore('customer', () => {
   const isLoading = computed(() => state.value.loading);
   const error = computed(() => state.value.error);
 
-  // Actions
   const fetchCustomers = async (): Promise<void> => {
     state.value.loading = true;
     state.value.error = null;
 
     try {
-      // Сначала попробуем загрузить данные из localStorage
       const storedCustomers = localStorage.getItem('crm_customers_data');
       if (storedCustomers) {
         state.value.customers = JSON.parse(storedCustomers).map((c: any) => new CustomerModel(c));
       } else {
-        // Если данных нет в localStorage, загружаем с сервера
         const customers = await customerApi.getAllCustomers();
         state.value.customers = customers.map(c => new CustomerModel(c));
-        // Сохраняем в localStorage
         localStorage.setItem('crm_customers_data', JSON.stringify(state.value.customers));
       }
     } catch (err: any) {
@@ -53,7 +42,7 @@ export const useCustomerStore = defineStore('customer', () => {
     }
   };
 
-  const fetchCustomerById = async (id: string): Promise<Customer | null> => {
+  const fetchCustomerById = async (id: string): Promise<ICustomer | null> => {
     state.value.loading = true;
     state.value.error = null;
 
@@ -61,7 +50,6 @@ export const useCustomerStore = defineStore('customer', () => {
       const customer = await customerApi.getCustomerById(id);
       const customerModel = new CustomerModel(customer);
 
-      // Update in local state if exists
       const existingIndex = state.value.customers.findIndex(c => c.id === id);
       if (existingIndex !== -1) {
         state.value.customers[existingIndex] = customerModel;
@@ -80,12 +68,11 @@ export const useCustomerStore = defineStore('customer', () => {
     }
   };
 
-  const createCustomer = async (customerData: Omit<Customer, 'id' | 'createdAt' | 'updatedAt'> | Partial<Customer>): Promise<Customer | null> => {
+  const createCustomer = async (customerData: Omit<ICustomer, 'id' | 'createdAt' | 'updatedAt'> | Partial<ICustomer>): Promise<ICustomer | null> => {
     state.value.loading = true;
     state.value.error = null;
 
     try {
-      // Проверяем, что обязательные поля присутствуют
       if (!customerData.name || !customerData.email) {
         throw new Error('Name and email are required');
       }
@@ -97,13 +84,12 @@ export const useCustomerStore = defineStore('customer', () => {
         company: customerData.company,
         position: customerData.position,
         notes: customerData.notes
-      } as Omit<Customer, 'id' | 'createdAt' | 'updatedAt'>;
+      } as Omit<ICustomer, 'id' | 'createdAt' | 'updatedAt'>;
 
       const createdCustomer = await customerApi.createCustomer(validCustomerData);
       const customerModel = new CustomerModel(createdCustomer);
       state.value.customers.push(customerModel);
 
-      // Сохраняем обновленный список в localStorage
       localStorage.setItem('crm_customers_data', JSON.stringify(state.value.customers));
 
       return customerModel;
@@ -116,7 +102,7 @@ export const useCustomerStore = defineStore('customer', () => {
     }
   };
 
-  const updateCustomer = async (id: string, customerData: Partial<Customer>): Promise<Customer | null> => {
+  const updateCustomer = async (id: string, customerData: Partial<ICustomer>): Promise<ICustomer | null> => {
     state.value.loading = true;
     state.value.error = null;
 
@@ -133,7 +119,6 @@ export const useCustomerStore = defineStore('customer', () => {
         state.value.currentCustomer = customerModel;
       }
 
-      // Сохраняем обновленный список в localStorage
       localStorage.setItem('crm_customers_data', JSON.stringify(state.value.customers));
 
       return customerModel;
@@ -159,7 +144,6 @@ export const useCustomerStore = defineStore('customer', () => {
         state.value.currentCustomer = null;
       }
 
-      // Сохраняем обновленный список в localStorage
       localStorage.setItem('crm_customers_data', JSON.stringify(state.value.customers));
 
       return true;
@@ -172,22 +156,19 @@ export const useCustomerStore = defineStore('customer', () => {
     }
   };
 
-  const setCurrentCustomer = (customer: Customer | null) => {
+  const setCurrentCustomer = (customer: ICustomer | null) => {
     state.value.currentCustomer = customer;
   };
 
   return {
-    // State
     ...state.value,
 
-    // Getters
     allCustomers,
     customerById,
     customerCount,
     isLoading,
     error,
 
-    // Actions
     fetchCustomers,
     fetchCustomerById,
     createCustomer,

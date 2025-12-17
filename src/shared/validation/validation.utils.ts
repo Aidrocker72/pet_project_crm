@@ -1,6 +1,8 @@
-import type { Customer, Deal, Pipeline } from '@/shared';
 import { VALIDATION_PATTERNS } from '@/constants/validation-patterns';
 import { ERROR_MESSAGES } from '@/constants/error-messages';
+import type { ICustomer } from '@/interfaces/ICustomer';
+import type { IPipeline } from '@/interfaces/IPipeline';
+import type { IDeal } from '@/interfaces/IDeal';
 
 /**
  * Утилиты для валидации данных
@@ -9,7 +11,7 @@ export const validationUtils = {
   /**
    * Валидация данных клиента
    */
-  validateCustomer(data: Partial<Customer>): { isValid: boolean; errors: string[] } {
+  validateCustomer(data: Partial<ICustomer>): { isValid: boolean; errors: string[] } {
     const errors: string[] = [];
 
     if (!data.name || data.name.trim().length === 0) {
@@ -35,7 +37,7 @@ export const validationUtils = {
   /**
    * Валидация данных сделки
    */
-  validateDeal(data: Partial<Deal>): { isValid: boolean; errors: string[] } {
+  validateDeal(data: Partial<IDeal>): { isValid: boolean; errors: string[] } {
     const errors: string[] = [];
 
     if (!data.title || data.title.trim().length === 0) {
@@ -71,7 +73,7 @@ export const validationUtils = {
   /**
    * Валидация данных воронки
    */
-  validatePipeline(data: Partial<Pipeline>): { isValid: boolean; errors: string[] } {
+  validatePipeline(data: Partial<IPipeline>): { isValid: boolean; errors: string[] } {
     const errors: string[] = [];
 
     if (!data.name || data.name.trim().length === 0) {

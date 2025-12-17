@@ -1,19 +1,16 @@
-import type { Pipeline } from '@/shared';
 import { INITIAL_DATA,  } from '@/constants/initial-data';
-import { getFromLocalStorage, saveToLocalStorage, LOCAL_STORAGE_KEYS } from '@/shared/storage/local-storage.util';
-
-// Моковая реализация API для Pipeline
-// В реальном приложении здесь будет интеграция с реальным API
+import { getFromLocalStorage, saveToLocalStorage } from '@/shared/storage/local-storage.util';
+import { LOCAL_STORAGE_KEYS } from '@/constants/local-storage-keys';
+import type { IPipeline } from '@/interfaces/IPipeline';
 
 class PipelineApi {
-  private baseUrl = '/api/pipelines'; // В реальном приложении заменить на реальный URL
+  private baseUrl = '/api/pipelines';
 
   private readonly STORAGE_KEY = LOCAL_STORAGE_KEYS.PIPELINES;
 
-  // Инициализируем данные из localStorage или используем начальные данные
-  private pipelines: Pipeline[] = this.loadFromStorage();
+  private pipelines: IPipeline[] = this.loadFromStorage();
 
-  private loadFromStorage(): Pipeline[] {
+  private loadFromStorage(): IPipeline[] {
     return getFromLocalStorage(this.STORAGE_KEY, INITIAL_DATA.PIPELINES);
   }
 
@@ -21,12 +18,11 @@ class PipelineApi {
     saveToLocalStorage(this.STORAGE_KEY, this.pipelines);
   }
 
-  async getAllPipelines(): Promise<Pipeline[]> {
-    // Возвращаем копию массива, чтобы избежать внешних изменений
+  async getAllPipelines(): Promise<IPipeline[]> {
     return [...this.pipelines];
   }
 
-  async getPipelineById(id: string): Promise<Pipeline> {
+  async getPipelineById(id: string): Promise<IPipeline> {
     const pipeline = this.pipelines.find(p => p.id === id);
 
     if (!pipeline) {
@@ -36,7 +32,7 @@ class PipelineApi {
     return pipeline;
   }
 
-  async createPipeline(pipeline: Omit<Pipeline, 'id' | 'createdAt' | 'updatedAt'> | Partial<Pipeline>): Promise<Pipeline> {
+  async createPipeline(pipeline: Omit<IPipeline, 'id' | 'createdAt' | 'updatedAt'> | Partial<IPipeline>): Promise<IPipeline> {
     const newPipeline = {
       id: Math.random().toString(36).substring(2, 9),
       createdAt: new Date().toISOString(),
@@ -47,17 +43,16 @@ class PipelineApi {
       ...pipeline
     };
 
-    // Убедимся, что обязательные поля заполнены
     if (!newPipeline.name) {
       throw new Error('Name is required');
     }
 
-    this.pipelines.push(newPipeline as Pipeline);
-    this.saveToStorage(); // Сохраняем в localStorage
-    return newPipeline as Pipeline;
+    this.pipelines.push(newPipeline as IPipeline);
+    this.saveToStorage();
+    return newPipeline as IPipeline;
   }
 
-  async updatePipeline(id: string, pipeline: Partial<Pipeline>): Promise<Pipeline> {
+  async updatePipeline(id: string, pipeline: Partial<IPipeline>): Promise<IPipeline> {
     const index = this.pipelines.findIndex(p => p.id === id);
     if (index === -1) {
       throw new Error(`Pipeline with id ${id} not found`);
@@ -77,16 +72,16 @@ class PipelineApi {
       updatedAt: new Date().toISOString()
     };
 
-    this.pipelines[index] = updatedPipeline as Pipeline;
-    this.saveToStorage(); // Сохраняем в localStorage
-    return updatedPipeline as Pipeline;
+    this.pipelines[index] = updatedPipeline as IPipeline;
+    this.saveToStorage();
+    return updatedPipeline as IPipeline;
   }
 
   async deletePipeline(id: string): Promise<void> {
     const index = this.pipelines.findIndex(p => p.id === id);
     if (index !== -1) {
       this.pipelines.splice(index, 1);
-      this.saveToStorage(); // Сохраняем изменения в localStorage
+      this.saveToStorage();
     }
   }
 }

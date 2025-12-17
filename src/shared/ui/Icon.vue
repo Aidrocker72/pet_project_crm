@@ -5,15 +5,9 @@
 </template>
 
 <script setup lang="ts">
-export interface IconProps {
-  name: string;
-  width?: string | number;
-  height?: string | number;
-  color?: string;
-  className?: string;
-}
+import type { IIconProps } from '@/interfaces/props/ui/IIconProps';
 
-withDefaults(defineProps<IconProps>(), {
+withDefaults(defineProps<IIconProps>(), {
   width: 20,
   height: 20,
   color: 'currentColor',

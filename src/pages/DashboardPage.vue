@@ -74,7 +74,6 @@
       </section>
     </div>
 
-    <!-- Customer Modal -->
     <Modal
       v-model:isOpen="showCustomerModal"
       title="Создать нового клиента"
@@ -86,7 +85,6 @@
       />
     </Modal>
 
-    <!-- Deal Modal -->
     <Modal
       v-model:isOpen="showDealModal"
       title="Создать новую сделку"
@@ -106,23 +104,21 @@ import { useRouter } from 'vue-router';
 import { useCustomerStore } from '@/entities/customer/store/customer.store';
 import { useDealStore } from '@/entities/deal/store/deal.store';
 import { usePipelineStore } from '@/entities/pipeline/store/pipeline.store';
-import type { Customer, Deal } from '@/shared';
 import Button from '@/shared/ui/Button.vue';
 import Modal from '@/shared/ui/Modal.vue';
 import CustomerForm from '@/features/customer-form/ui/CustomerForm.vue';
 import DealForm from '@/features/deal-form/ui/DealForm.vue';
+import type { ICustomer } from '@/interfaces/ICustomer';
+import type { IDeal } from '@/interfaces/IDeal';
 
-// Stores
 const customerStore = useCustomerStore();
 const dealStore = useDealStore();
 const pipelineStore = usePipelineStore();
 const router = useRouter();
 
-// State
 const showCustomerModal = ref(false);
 const showDealModal = ref(false);
 
-// Computed properties
 const customerCount = computed(() => customerStore.customerCount);
 const dealCount = computed(() => dealStore.dealCount);
 
@@ -165,19 +161,17 @@ const getStageName = (stageId: string) => {
   return 'Unknown Stage';
 };
 
-const handleCustomerSubmit = async (customerData: Omit<Customer, 'id' | 'createdAt' | 'updatedAt'> | Partial<Customer>) => {
+const handleCustomerSubmit = async (customerData: Omit<ICustomer, 'id' | 'createdAt' | 'updatedAt'> | Partial<ICustomer>) => {
   const result = await customerStore.createCustomer(customerData);
   if (result) {
     showCustomerModal.value = false;
-    // Optionally show success message
   }
 };
 
-const handleDealSubmit = async (dealData: Omit<Deal, 'id' | 'createdAt' | 'updatedAt'> | Partial<Deal>) => {
+const handleDealSubmit = async (dealData: Omit<IDeal, 'id' | 'createdAt' | 'updatedAt'> | Partial<IDeal>) => {
  const result = await dealStore.createDeal(dealData);
   if (result) {
     showDealModal.value = false;
-    // Optionally show success message
   }
 };
 
@@ -189,7 +183,6 @@ const goToDealDetails = (id: string) => {
  router.push(`/deals/${id}`);
 };
 
-// Initialize data
 onMounted(async () => {
  await Promise.all([
     customerStore.fetchCustomers(),

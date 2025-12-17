@@ -1,6 +1,6 @@
-import type { Deal } from '@/shared';
+import type { IDeal } from "@/interfaces/IDeal";
 
-export class DealModel implements Deal {
+export class DealModel implements IDeal {
   id: string;
   title: string;
   description?: string;
@@ -14,7 +14,7 @@ export class DealModel implements Deal {
   createdAt: string;
   updatedAt: string;
 
-  constructor(data: Partial<Deal> = {}) {
+  constructor(data: Partial<IDeal> = {}) {
     this.id = data.id || '';
     this.title = data.title || '';
     this.description = data.description;
@@ -29,8 +29,7 @@ export class DealModel implements Deal {
     this.updatedAt = data.updatedAt || new Date().toISOString();
   }
 
-  // Методы для работы с моделью
-  static validate(deal: Deal): boolean {
+  static validate(deal: IDeal): boolean {
     return !!deal.title && !!deal.customerId && !!deal.pipelineId && !!deal.stageId;
   }
 

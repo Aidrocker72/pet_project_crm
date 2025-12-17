@@ -1,49 +1,17 @@
-import type { Deal } from '@/shared';
-import { API_CONSTANTS } from '@/constants/api.constants';
-import { getFromLocalStorage, saveToLocalStorage, LOCAL_STORAGE_KEYS } from '@/shared/storage/local-storage.util';
-
-// Моковая реализация API для Deal
-// В реальном приложении здесь будет интеграция с реальным API
+import { getFromLocalStorage, saveToLocalStorage } from '@/shared/storage/local-storage.util';
+import { INITIAL_DATA } from '@/constants/initial-data';
+import { LOCAL_STORAGE_KEYS } from '@/constants/local-storage-keys';
+import type { IDeal } from '@/interfaces/IDeal';
 
 class DealApi {
-  private baseUrl = '/api/deals'; // В реальном приложении заменить на реальный URL
+  private baseUrl = '/api/deals';
 
   private readonly STORAGE_KEY = LOCAL_STORAGE_KEYS.DEALS;
 
-  // Инициализируем данные из localStorage или используем начальные данные
-  private deals: Deal[] = this.loadFromStorage();
+  private deals: IDeal[] = this.loadFromStorage();
 
-  private loadFromStorage(): Deal[] {
-    return getFromLocalStorage(this.STORAGE_KEY, [
-      {
-        id: '1',
-        title: 'Enterprise Software License',
-        description: 'Large enterprise software package',
-        customerId: '1',
-        pipelineId: '1',
-        stageId: '1',
-        value: 50000,
-        probability: 75,
-        closeDate: '2023-12-15',
-        status: 'open',
-        createdAt: '2023-09-10T09:15:00Z',
-        updatedAt: '2023-09-10T09:15:00Z'
-      },
-      {
-        id: '2',
-        title: 'Consulting Services',
-        description: 'IT consulting for digital transformation',
-        customerId: '2',
-        pipelineId: '1',
-        stageId: '2',
-        value: 25000,
-        probability: 60,
-        closeDate: '2023-11-30',
-        status: 'open',
-        createdAt: '2023-08-22T14:30:00Z',
-        updatedAt: '2023-08-22T14:30:00Z'
-      }
-    ]) as Deal[];
+  private loadFromStorage(): IDeal[] {
+    return getFromLocalStorage(this.STORAGE_KEY, INITIAL_DATA.DEALS) as IDeal[];
   }
 
   private saveToStorage(): void {
@@ -54,12 +22,11 @@ class DealApi {
     this.saveToStorage();
   }
 
-  async getAllDeals(): Promise<Deal[]> {
-    // Возвращаем копию массива, чтобы избежать внешних изменений
+  async getAllDeals(): Promise<IDeal[]> {
     return [...this.deals];
   }
 
-  async getDealById(id: string): Promise<Deal> {
+  async getDealById(id: string): Promise<IDeal> {
     const deal = this.deals.find(d => d.id === id);
 
     if (!deal) {
@@ -69,7 +36,7 @@ class DealApi {
     return deal;
   }
 
-  async createDeal(deal: Omit<Deal, 'id' | 'createdAt' | 'updatedAt'> | Partial<Deal>): Promise<Deal> {
+  async createDeal(deal: Omit<IDeal, 'id' | 'createdAt' | 'updatedAt'> | Partial<IDeal>): Promise<IDeal> {
     const newDeal = {
       id: Math.random().toString(36).substring(2, 9),
       createdAt: new Date().toISOString(),
@@ -86,17 +53,16 @@ class DealApi {
       ...deal
     };
 
-    // Убедимся, что обязательные поля заполнены
     if (!newDeal.title || !newDeal.customerId || !newDeal.pipelineId || !newDeal.stageId) {
       throw new Error('Title, customer, pipeline, and stage are required');
     }
 
-    this.deals.push(newDeal as Deal);
+    this.deals.push(newDeal as IDeal);
     this.saveToStorage();
-    return newDeal as Deal;
+    return newDeal as IDeal;
   }
 
-  async updateDeal(id: string, deal: Partial<Deal>): Promise<Deal> {
+  async updateDeal(id: string, deal: Partial<IDeal>): Promise<IDeal> {
     const index = this.deals.findIndex(d => d.id === id);
     if (index === -1) {
       throw new Error(`Deal with id ${id} not found`);
@@ -119,16 +85,16 @@ class DealApi {
       updatedAt: new Date().toISOString()
     };
 
-    this.deals[index] = updatedDeal as Deal;
-    this.saveToStorage(); // Сохраняем в localStorage
-    return updatedDeal as Deal;
+    this.deals[index] = updatedDeal as IDeal;
+    this.saveToStorage();
+    return updatedDeal as IDeal;
   }
 
   async deleteDeal(id: string): Promise<void> {
     const index = this.deals.findIndex(d => d.id === id);
     if (index !== -1) {
       this.deals.splice(index, 1);
-      this.saveToStorage(); // Сохраняем изменения в localStorage
+      this.saveToStorage();
     }
   }
 }

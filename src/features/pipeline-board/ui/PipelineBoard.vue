@@ -70,35 +70,30 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watchEffect, watch } from 'vue';
-import type { Deal } from '@/shared';
 import { useDealStore } from '@/entities/deal/store/deal.store';
 import { useCustomerStore } from '@/entities/customer/store/customer.store';
 import { usePipelineStore } from '@/entities/pipeline/store/pipeline.store';
-import Button from '@/shared/ui/Button.vue';
 import draggable from 'vuedraggable';
+import type { IDeal } from '@/interfaces/IDeal';
 
-// Stores
 const dealStore = useDealStore();
 const customerStore = useCustomerStore();
 const pipelineStore = usePipelineStore();
 
-// State
 const loading = ref(false);
 const error = ref<string | null>(null);
 const dragging = ref(false);
 
-// Computed properties
   const deals = computed(() => dealStore.allDeals);
   const customers = computed(() => customerStore.allCustomers);
   const pipelines = computed(() => pipelineStore.allPipelines);
 
   const currentPipeline = computed(() => {
-    // For now, use the first pipeline - in a real app, this might come from props or route params
     return pipelines.value.length > 0 ? pipelines.value[0] : null;
   });
 
   const dealsByStage = computed(() => {
-    const result: Record<string, Deal[]> = {};
+    const result: Record<string, IDeal[]> = {};
     const current = currentPipeline.value;
     if (current) {
       current.stages?.forEach(stage => {
@@ -108,15 +103,12 @@ const dragging = ref(false);
     return result;
   });
 
-  // Используем ref для хранения текущих сделок по стадиям
-  const dealsByStageRef = ref<Record<string, Deal[]>>({});
+  const dealsByStageRef = ref<Record<string, IDeal[]>>({});
 
-  // Обновляем реактивный объект при изменении исходных данных
   watchEffect(() => {
     dealsByStageRef.value = { ...dealsByStage.value };
   });
 
-// Methods
 const getDealsByStage = (stageId: string) => {
   return dealsByStageRef.value[stageId] || [];
 };
@@ -146,16 +138,12 @@ const refreshData = async () => {
 };
 
 const onMove = (event: any) => {
-  // Разрешаем перемещение
   return true;
 };
 
-// Watcher для отслеживания изменений в массивах и обновления стадии сделок
-watch(() => dealsByStageRef.value, (newVal: Record<string, Deal[]>) => {
-  // Проходим по всем стадиям и обновляем стадию для каждой сделки
+watch(() => dealsByStageRef.value, (newVal: Record<string, IDeal[]>) => {
   Object.keys(newVal).forEach(stageId => {
-    newVal[stageId]?.forEach((deal: Deal, index: number) => {
-      // Если стадия сделки не совпадает с текущей стадией, обновляем
+    newVal[stageId]?.forEach((deal: IDeal, index: number) => {
       if (deal.stageId !== stageId) {
         dealStore.updateDeal(deal.id, { stageId });
       }
@@ -165,9 +153,7 @@ watch(() => dealsByStageRef.value, (newVal: Record<string, Deal[]>) => {
 
 const onStageChange = async (event: any, stageId: string) => {
   if (event?.added) {
-    // Deal was added from another stage
     const { element: deal } = event.added;
-    // Update the deal's stage
     const updatedDeal = await dealStore.updateDeal(deal.id, { stageId });
 
     if (!updatedDeal) {
@@ -176,13 +162,10 @@ const onStageChange = async (event: any, stageId: string) => {
   }
 };
 
-// Deal click handler
-const onDealClick = (deal: Deal) => {
-  // In a real app, this might navigate to a deal detail page
+const onDealClick = (deal: IDeal) => {
   console.log('Deal clicked:', deal);
 };
 
-// Initialize data
 onMounted(() => {
   refreshData();
 });

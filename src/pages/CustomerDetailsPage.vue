@@ -72,7 +72,6 @@
       Клиент не найден
     </div>
 
-    <!-- Customer Edit Modal -->
     <Modal
       v-model:isOpen="showEditModal"
       title="Редактировать клиента"
@@ -92,21 +91,18 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useCustomerStore } from '@/entities/customer/store/customer.store';
 import { useDealStore } from '@/entities/deal/store/deal.store';
-import type { Customer, Deal } from '@/shared';
 import Button from '@/shared/ui/Button.vue';
 import Modal from '@/shared/ui/Modal.vue';
 import CustomerForm from '@/features/customer-form/ui/CustomerForm.vue';
+import type { ICustomer } from '@/interfaces/ICustomer';
 
-// Stores
 const customerStore = useCustomerStore();
 const dealStore = useDealStore();
 const router = useRouter();
 const route = useRoute();
 
-// State
 const showEditModal = ref(false);
 
-// Computed properties
 const customerId = computed(() => route.params.id as string);
 const customer = computed(() => customerStore.customerById(customerId.value));
 const loading = computed(() => customerStore.isLoading);
@@ -116,7 +112,6 @@ const customerDeals = computed(() => {
   return dealStore.allDeals.filter(deal => deal.customerId === customerId.value);
 });
 
-// Methods
 const goBack = () => {
   router.go(-1);
 };
@@ -140,7 +135,7 @@ const deleteCustomer = async () => {
   }
 };
 
-const handleEditSubmit = async (customerData: Partial<Customer>) => {
+const handleEditSubmit = async (customerData: Partial<ICustomer>) => {
   const result = await customerStore.updateCustomer(customerId.value, customerData);
   if (result) {
     showEditModal.value = false;
@@ -149,7 +144,6 @@ const handleEditSubmit = async (customerData: Partial<Customer>) => {
   }
 };
 
-// Initialize data
 onMounted(() => {
   customerStore.fetchCustomerById(customerId.value);
   dealStore.fetchDeals();

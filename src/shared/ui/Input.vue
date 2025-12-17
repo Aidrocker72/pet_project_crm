@@ -33,22 +33,11 @@
 </template>
 
 <script setup lang="ts">
+import type { IInputEmits } from '@/interfaces/emits/ui/IInputEmits';
+import type { IInputProps } from '@/interfaces/props/ui/IInputProps';
 import { useAttrs } from 'vue';
 
-export interface InputProps {
-  id?: string;
-  modelValue: string | number | undefined;
-  label?: string;
-  placeholder?: string;
-  type?: string;
-  size?: 'small' | 'medium' | 'large';
-  disabled?: boolean;
-  readonly?: boolean;
-  required?: boolean;
-  error?: string;
-}
-
-const props = withDefaults(defineProps<InputProps>(), {
+const props = withDefaults(defineProps<IInputProps>(), {
   type: 'text',
   size: 'medium',
   disabled: false,
@@ -56,26 +45,20 @@ const props = withDefaults(defineProps<InputProps>(), {
   required: false
 });
 
-const emit = defineEmits<{
-  'update:modelValue': [value: string | number | undefined];
-  blur: [event: FocusEvent];
-}>();
+const emit = defineEmits<IInputEmits>();
 
 const attrs = useAttrs();
 
-// Функция для обработки ввода
 function handleInput(event: Event) {
   const target = event.target as HTMLInputElement;
   console.log(target.value)
   emit('update:modelValue', target.value);
 }
 
-// Функция для обработки потери фокуса
 function handleBlur(event: FocusEvent) {
   emit('blur', event);
 }
 
-// Генерация случайного ID, если не предоставлен
 const generatedId = `crm-input-${Math.random().toString(36).substr(2, 9)}`;
 const id = props.id || generatedId;
 </script>

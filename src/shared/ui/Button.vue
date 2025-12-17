@@ -24,16 +24,10 @@
 </template>
 
 <script setup lang="ts">
-export interface ButtonProps {
-  type?: 'button' | 'submit' | 'reset';
-  variant?: 'primary' | 'secondary' | 'danger' | 'outline';
-  size?: 'small' | 'medium' | 'large';
-  disabled?: boolean;
-  loading?: boolean;
-  loadingText?: string;
-}
+import type { IButtonProps } from '@/interfaces/props/ui/IButtonProps';
 
-withDefaults(defineProps<ButtonProps>(), {
+
+withDefaults(defineProps<IButtonProps>(), {
   type: 'button',
   variant: 'primary',
   size: 'medium',

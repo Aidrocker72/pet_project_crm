@@ -1,6 +1,6 @@
-import type { Customer } from '@/shared';
+import type { ICustomer } from "@/interfaces/ICustomer";
 
-export class CustomerModel implements Customer {
+export class CustomerModel implements ICustomer {
   id: string;
   name: string;
   email: string;
@@ -11,7 +11,7 @@ export class CustomerModel implements Customer {
   createdAt: string;
   updatedAt: string;
 
-  constructor(data: Partial<Customer> = {}) {
+  constructor(data: Partial<ICustomer> = {}) {
     this.id = data.id || '';
     this.name = data.name || '';
     this.email = data.email || '';
@@ -23,7 +23,7 @@ export class CustomerModel implements Customer {
     this.updatedAt = data.updatedAt || new Date().toISOString();
   }
 
-  static validate(customer: Customer): boolean {
+  static validate(customer: ICustomer): boolean {
     return !!customer.name && !!customer.email;
   }
 

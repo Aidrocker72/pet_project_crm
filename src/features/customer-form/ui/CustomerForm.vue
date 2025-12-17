@@ -131,32 +131,23 @@
 import { ref, computed, watch } from 'vue';
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
-import type { Customer } from '@/shared';
 import { useCustomerStore } from '@/entities/customer/store/customer.store';
 import Input from '@/shared/ui/Input.vue';
 import Button from '@/shared/ui/Button.vue';
+import type { ICustomerFormProps } from '@/interfaces/props/ICustomerFormProps';
+import type { ICustomerFormEmits } from '@/interfaces/emits/ICustomerFormEmits';
+import type { ICustomer } from '@/interfaces/ICustomer';
 
-interface CustomerFormEmits {
-  submit: [customer: Omit<Customer, 'id' | 'createdAt' | 'updatedAt'> | Partial<Customer>];
-  cancel: [];
-}
-
-interface CustomerFormProps {
-  initialData?: Customer | null;
-}
-
-const props = withDefaults(defineProps<CustomerFormProps>(), {
+const props = withDefaults(defineProps<ICustomerFormProps>(), {
   initialData: null
 });
 
-const emit = defineEmits<CustomerFormEmits>();
+const emit = defineEmits<ICustomerFormEmits>();
 
 const isEdit = computed(() => !!props.initialData?.id);
 
-// Store
 const customerStore = useCustomerStore();
 
-// Schema for validation
 const customerSchema = yup.object({
   name: yup.string().required('Имя обязательно').min(2, 'Имя должно содержать не менее 2 символов'),
   email: yup.string().email('Пожалуйста, введите действительный email').required('Email обязателен'),
@@ -166,10 +157,8 @@ const customerSchema = yup.object({
   notes: yup.string()
 });
 
-// Loading state
 const isSubmitting = ref(false);
 
-// Initial form values
 const initialValues = computed(() => {
   if (props.initialData) {
     return {
@@ -197,17 +186,15 @@ const onSubmit = (values: any) => {
   console.log(values)
   try {
     if (isEdit.value && props.initialData?.id) {
-      // For edit, include the ID in the partial update
       const updateData = {
         ...values,
         id: props.initialData.id
-      } as Partial<Customer> & { id: string };
+      } as Partial<ICustomer> & { id: string };
       emit('submit', updateData);
     } else {
-      // For create, exclude ID
       const createData = {
         ...values
-      } as Omit<Customer, 'id' | 'createdAt' | 'updatedAt'>;
+      } as Omit<ICustomer, 'id' | 'createdAt' | 'updatedAt'>;
       emit('submit', createData);
     }
   } catch (error) {

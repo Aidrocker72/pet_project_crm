@@ -71,24 +71,21 @@ import { useRouter } from 'vue-router';
 import { useDealStore } from '@/entities/deal/store/deal.store';
 import { useCustomerStore } from '@/entities/customer/store/customer.store';
 import { usePipelineStore } from '@/entities/pipeline/store/pipeline.store';
-import type { Deal } from '@/shared';
 import Button from '@/shared/ui/Button.vue';
 import Input from '@/shared/ui/Input.vue';
 import Modal from '@/shared/ui/Modal.vue';
 import DealForm from '@/features/deal-form/ui/DealForm.vue';
+import type { IDeal } from '@/interfaces/IDeal';
 
-// Stores
 const dealStore = useDealStore();
 const customerStore = useCustomerStore();
 const pipelineStore = usePipelineStore();
 const router = useRouter();
 
-// State
 const showDealModal = ref(false);
 const searchQuery = ref('');
-const editingDeal = ref<Deal | null>(null);
+const editingDeal = ref<IDeal | null>(null);
 
-// Computed properties
 const deals = computed(() => dealStore.allDeals);
 const customers = computed(() => customerStore.allCustomers);
 const pipelines = computed(() => pipelineStore.allPipelines);
@@ -110,7 +107,6 @@ const filteredDeals = computed(() => {
   );
 });
 
-// Methods
 const getCustomerName = (customerId: string) => {
   const customer = customers.value.find(c => c.id === customerId);
   return customer ? customer.name : 'Unknown Customer';
@@ -128,7 +124,7 @@ const goToDealDetails = (id: string) => {
   router.push(`/deals/${id}`);
 };
 
-const editDeal = (deal: Deal) => {
+const editDeal = (deal: IDeal) => {
   editingDeal.value = deal;
   showDealModal.value = true;
 };
@@ -142,15 +138,13 @@ const deleteDeal = async (id: string) => {
   }
 };
 
-const handleDealSubmit = async (dealData: Omit<Deal, 'id' | 'createdAt' | 'updatedAt'> | Partial<Deal>) => {
+const handleDealSubmit = async (dealData: Omit<IDeal, 'id' | 'createdAt' | 'updatedAt'> | Partial<IDeal>) => {
   let result;
 
   if (isEditing.value && editingDeal.value?.id) {
-    // Update existing deal
-    result = await dealStore.updateDeal(editingDeal.value.id, dealData as Partial<Deal>);
+    result = await dealStore.updateDeal(editingDeal.value.id, dealData as Partial<IDeal>);
   } else {
-    // Create new deal
-    result = await dealStore.createDeal(dealData as Omit<Deal, 'id' | 'createdAt' | 'updatedAt'>);
+    result = await dealStore.createDeal(dealData as Omit<IDeal, 'id' | 'createdAt' | 'updatedAt'>);
   }
 
   if (result) {
@@ -165,7 +159,6 @@ const closeDealModal = () => {
   editingDeal.value = null;
 };
 
-// Initialize data
 onMounted(async () => {
   await Promise.all([
     dealStore.fetchDeals(),

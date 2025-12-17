@@ -1,25 +1,19 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import type { Deal } from '@/shared';
 import { DealModel } from '@/entities/deal/model/deal.model';
 import { dealApi } from '@/entities/deal/api/deal.api';
+import type { IDealState } from '@/interfaces/store/IDealState';
+import type { IDeal } from '@/interfaces/IDeal';
 
-interface DealState {
-  deals: Deal[];
-  loading: boolean;
-  error: string | null;
-  currentDeal: Deal | null;
-}
 
 export const useDealStore = defineStore('deal', () => {
-  const state = ref<DealState>({
+  const state = ref<IDealState>({
     deals: [],
     loading: false,
     error: null,
     currentDeal: null
   });
 
-  // Getters
   const allDeals = computed(() => state.value.deals);
   const dealById = computed(() => (id: string) =>
     state.value.deals.find(deal => deal.id === id)
@@ -37,21 +31,17 @@ export const useDealStore = defineStore('deal', () => {
   const isLoading = computed(() => state.value.loading);
   const error = computed(() => state.value.error);
 
-  // Actions
   const fetchDeals = async (): Promise<void> => {
     state.value.loading = true;
     state.value.error = null;
 
     try {
-      // Сначала попробуем загрузить данные из localStorage
       const storedDeals = localStorage.getItem('crm_deals_data');
       if (storedDeals) {
         state.value.deals = JSON.parse(storedDeals).map((d: any) => new DealModel(d));
       } else {
-        // Если данных нет в localStorage, загружаем с сервера
         const deals = await dealApi.getAllDeals();
         state.value.deals = deals.map(d => new DealModel(d));
-        // Сохраняем в localStorage
         localStorage.setItem('crm_deals_data', JSON.stringify(state.value.deals));
       }
     } catch (err: any) {
@@ -62,7 +52,7 @@ export const useDealStore = defineStore('deal', () => {
     }
   };
 
-  const fetchDealById = async (id: string): Promise<Deal | null> => {
+  const fetchDealById = async (id: string): Promise<IDeal | null> => {
     state.value.loading = true;
     state.value.error = null;
 
@@ -70,7 +60,6 @@ export const useDealStore = defineStore('deal', () => {
       const deal = await dealApi.getDealById(id);
       const dealModel = new DealModel(deal);
 
-      // Update in local state if exists
       const existingIndex = state.value.deals.findIndex(d => d.id === id);
       if (existingIndex !== -1) {
         state.value.deals[existingIndex] = dealModel;
@@ -89,12 +78,11 @@ export const useDealStore = defineStore('deal', () => {
     }
   };
 
-  const createDeal = async (dealData: Omit<Deal, 'id' | 'createdAt' | 'updatedAt'> | Partial<Deal>): Promise<Deal | null> => {
+  const createDeal = async (dealData: Omit<IDeal, 'id' | 'createdAt' | 'updatedAt'> | Partial<IDeal>): Promise<IDeal | null> => {
     state.value.loading = true;
     state.value.error = null;
 
     try {
-      // Проверяем, что обязательные поля присутствуют
       if (!dealData.title || !dealData.customerId || !dealData.pipelineId || !dealData.stageId) {
         throw new Error('Title, customer, pipeline, and stage are required');
       }
@@ -109,7 +97,7 @@ export const useDealStore = defineStore('deal', () => {
         probability: dealData.probability || 0,
         closeDate: dealData.closeDate,
         status: dealData.status || 'open'
-      } as Omit<Deal, 'id' | 'createdAt' | 'updatedAt'>;
+      } as Omit<IDeal, 'id' | 'createdAt' | 'updatedAt'>;
 
       const createdDeal = await dealApi.createDeal(validDealData);
       const dealModel = new DealModel(createdDeal);
@@ -128,7 +116,7 @@ export const useDealStore = defineStore('deal', () => {
     }
   };
 
-  const updateDeal = async (id: string, dealData: Partial<Deal>): Promise<Deal | null> => {
+  const updateDeal = async (id: string, dealData: Partial<IDeal>): Promise<IDeal | null> => {
     state.value.loading = true;
     state.value.error = null;
 
@@ -145,7 +133,6 @@ export const useDealStore = defineStore('deal', () => {
         state.value.currentDeal = dealModel;
       }
 
-      // Сохраняем обновленный список в localStorage
       localStorage.setItem('crm_deals_data', JSON.stringify(state.value.deals));
 
       return dealModel;
@@ -171,7 +158,6 @@ export const useDealStore = defineStore('deal', () => {
         state.value.currentDeal = null;
       }
 
-      // Сохраняем обновленный список в localStorage
       localStorage.setItem('crm_deals_data', JSON.stringify(state.value.deals));
 
       return true;
@@ -184,15 +170,13 @@ export const useDealStore = defineStore('deal', () => {
     }
   };
 
-  const setCurrentDeal = (deal: Deal | null) => {
+  const setCurrentDeal = (deal: IDeal | null) => {
     state.value.currentDeal = deal;
   };
 
   return {
-    // State
     ...state.value,
 
-    // Getters
     allDeals,
     dealById,
     dealsByCustomerId,
@@ -202,7 +186,6 @@ export const useDealStore = defineStore('deal', () => {
     isLoading,
     error,
 
-    // Actions
     fetchDeals,
     fetchDealById,
     createDeal,

@@ -1,14 +1,15 @@
 import { INITIAL_DATA } from '@/constants/initial-data';
-import type { Customer } from '@/shared';
-import { getFromLocalStorage, saveToLocalStorage, LOCAL_STORAGE_KEYS } from '@/shared/storage/local-storage.util';
+import { LOCAL_STORAGE_KEYS } from '@/constants/local-storage-keys';
+import type { ICustomer } from '@/interfaces/ICustomer';
+import { getFromLocalStorage, saveToLocalStorage } from '@/shared/storage/local-storage.util';
 
 class CustomerApi {
 
   private readonly STORAGE_KEY = LOCAL_STORAGE_KEYS.CUSTOMERS;
 
-  private customers: Customer[] = this.loadFromStorage();
+  private customers: ICustomer[] = this.loadFromStorage();
 
-  private loadFromStorage(): Customer[] {
+  private loadFromStorage(): ICustomer[] {
     return getFromLocalStorage(this.STORAGE_KEY, INITIAL_DATA.CUSTOMERS);
   }
 
@@ -16,7 +17,7 @@ class CustomerApi {
     saveToLocalStorage(this.STORAGE_KEY, this.customers);
   }
 
-  async getAllCustomers(): Promise<Customer[]> {
+  async getAllCustomers(): Promise<ICustomer[]> {
     return [...this.customers];
   }
 
@@ -24,7 +25,7 @@ class CustomerApi {
     this.saveToStorage();
   }
 
-  async getCustomerById(id: string): Promise<Customer> {
+  async getCustomerById(id: string): Promise<ICustomer> {
     const customer = this.customers.find(c => c.id === id);
 
     if (!customer) {
@@ -34,7 +35,7 @@ class CustomerApi {
     return customer;
   }
 
-  async createCustomer(customer: Omit<Customer, 'id' | 'createdAt' | 'updatedAt'> | Partial<Customer>): Promise<Customer> {
+  async createCustomer(customer: Omit<ICustomer, 'id' | 'createdAt' | 'updatedAt'> | Partial<ICustomer>): Promise<ICustomer> {
     const newCustomer = {
       id: Math.random().toString(36).substring(2, 9),
       createdAt: new Date().toISOString(),
@@ -48,12 +49,12 @@ class CustomerApi {
       throw new Error('Name and email are required');
     }
 
-    this.customers.push(newCustomer as Customer);
+    this.customers.push(newCustomer as ICustomer);
     this.updateStorage();
-    return newCustomer as Customer;
+    return newCustomer as ICustomer;
   }
 
-  async updateCustomer(id: string, customer: Partial<Customer>): Promise<Customer> {
+  async updateCustomer(id: string, customer: Partial<ICustomer>): Promise<ICustomer> {
     const index = this.customers.findIndex(c => c.id === id);
     if (index === -1) {
       throw new Error(`Customer with id ${id} not found`);
@@ -74,9 +75,9 @@ class CustomerApi {
       updatedAt: new Date().toISOString()
     };
 
-    this.customers[index] = updatedCustomer as Customer;
+    this.customers[index] = updatedCustomer as ICustomer;
     this.updateStorage();
-    return updatedCustomer as Customer;
+    return updatedCustomer as ICustomer;
   }
 
   async deleteCustomer(id: string): Promise<void> {

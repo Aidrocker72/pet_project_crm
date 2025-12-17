@@ -1,14 +1,15 @@
-import type { Pipeline, PipelineStage } from '@/shared';
+import type { IPipeline } from '@/interfaces/IPipeline';
+import type { IPipelineStage } from '@/interfaces/IPipelineStage';
 
-export class PipelineModel implements Pipeline {
+export class PipelineModel implements IPipeline {
   id: string;
   name: string;
   description?: string;
-  stages: PipelineStage[];
+  stages: IPipelineStage[];
   createdAt: string;
   updatedAt: string;
 
-  constructor(data: Partial<Pipeline> = {}) {
+  constructor(data: Partial<IPipeline> = {}) {
     this.id = data.id || '';
     this.name = data.name || '';
     this.description = data.description;
@@ -17,12 +18,11 @@ export class PipelineModel implements Pipeline {
     this.updatedAt = data.updatedAt || new Date().toISOString();
   }
 
-  // Методы для работы с моделью
-  static validate(pipeline: Pipeline): boolean {
+  static validate(pipeline: IPipeline): boolean {
     return !!pipeline.name && pipeline.stages.length > 0;
   }
 
-  getStageById(stageId: string): PipelineStage | undefined {
+  getStageById(stageId: string): IPipelineStage | undefined {
     return this.stages.find(stage => stage.id === stageId);
   }
 
@@ -48,18 +48,18 @@ export class PipelineModel implements Pipeline {
     return previousStage ? previousStage.id : null;
   }
 
-  addStage(stage: PipelineStage): void {
+  addStage(stage: IPipelineStage): void {
     this.stages.push(stage);
     this.stages.sort((a, b) => a.order - b.order);
   }
 
-  updateStage(stageId: string, updates: Partial<PipelineStage>): void {
+  updateStage(stageId: string, updates: Partial<IPipelineStage>): void {
     const index = this.stages.findIndex(s => s.id === stageId);
     if (index !== -1) {
       this.stages[index] = {
         ...this.stages[index],
         ...updates
-      } as PipelineStage;
+      } as IPipelineStage;
       this.stages.sort((a, b) => a.order - b.order);
     }
   }

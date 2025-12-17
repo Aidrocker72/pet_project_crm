@@ -1,25 +1,19 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import type { Pipeline } from '@/shared';
 import { PipelineModel } from '@/entities/pipeline/model/pipeline.model';
 import { pipelineApi } from '@/entities/pipeline/api/pipeline.api';
+import type { IPipelineState } from '@/interfaces/store/IPipelineState';
+import type { IPipeline } from '@/interfaces/IPipeline';
 
-interface PipelineState {
-  pipelines: Pipeline[];
-  loading: boolean;
-  error: string | null;
-  currentPipeline: Pipeline | null;
-}
 
 export const usePipelineStore = defineStore('pipeline', () => {
-  const state = ref<PipelineState>({
+  const state = ref<IPipelineState>({
     pipelines: [],
     loading: false,
     error: null,
     currentPipeline: null
   });
 
-  // Getters
   const allPipelines = computed(() => state.value.pipelines);
   const pipelineById = computed(() => (id: string) =>
     state.value.pipelines.find(pipeline => pipeline.id === id)
@@ -28,21 +22,17 @@ export const usePipelineStore = defineStore('pipeline', () => {
   const isLoading = computed(() => state.value.loading);
   const error = computed(() => state.value.error);
 
-  // Actions
   const fetchPipelines = async (): Promise<void> => {
     state.value.loading = true;
     state.value.error = null;
 
     try {
-      // Сначала попробуем загрузить данные из localStorage
       const storedPipelines = localStorage.getItem('crm_pipelines_data');
       if (storedPipelines) {
         state.value.pipelines = JSON.parse(storedPipelines).map((p: any) => new PipelineModel(p));
       } else {
-        // Если данных нет в localStorage, загружаем с сервера
         const pipelines = await pipelineApi.getAllPipelines();
         state.value.pipelines = pipelines.map(p => new PipelineModel(p));
-        // Сохраняем в localStorage
         localStorage.setItem('crm_pipelines_data', JSON.stringify(state.value.pipelines));
       }
     } catch (err: any) {
@@ -53,7 +43,7 @@ export const usePipelineStore = defineStore('pipeline', () => {
     }
   };
 
-  const fetchPipelineById = async (id: string): Promise<Pipeline | null> => {
+  const fetchPipelineById = async (id: string): Promise<IPipeline | null> => {
     state.value.loading = true;
     state.value.error = null;
 
@@ -61,7 +51,6 @@ export const usePipelineStore = defineStore('pipeline', () => {
       const pipeline = await pipelineApi.getPipelineById(id);
       const pipelineModel = new PipelineModel(pipeline);
 
-      // Update in local state if exists
       const existingIndex = state.value.pipelines.findIndex(p => p.id === id);
       if (existingIndex !== -1) {
         state.value.pipelines[existingIndex] = pipelineModel;
@@ -80,12 +69,11 @@ export const usePipelineStore = defineStore('pipeline', () => {
     }
   };
 
-  const createPipeline = async (pipelineData: Omit<Pipeline, 'id' | 'createdAt' | 'updatedAt'> | Partial<Pipeline>): Promise<Pipeline | null> => {
+  const createPipeline = async (pipelineData: Omit<IPipeline, 'id' | 'createdAt' | 'updatedAt'> | Partial<IPipeline>): Promise<IPipeline | null> => {
     state.value.loading = true;
     state.value.error = null;
 
     try {
-      // Проверяем, что обязательные поля присутствуют
       if (!pipelineData.name) {
         throw new Error('Name is required');
       }
@@ -94,13 +82,12 @@ export const usePipelineStore = defineStore('pipeline', () => {
         name: pipelineData.name,
         description: pipelineData.description,
         stages: pipelineData.stages || []
-      } as Omit<Pipeline, 'id' | 'createdAt' | 'updatedAt'>;
+      } as Omit<IPipeline, 'id' | 'createdAt' | 'updatedAt'>;
 
       const createdPipeline = await pipelineApi.createPipeline(validPipelineData);
       const pipelineModel = new PipelineModel(createdPipeline);
       state.value.pipelines.push(pipelineModel);
 
-      // Сохраняем обновленный список в localStorage
       localStorage.setItem('crm_pipelines_data', JSON.stringify(state.value.pipelines));
 
       return pipelineModel;
@@ -113,7 +100,7 @@ export const usePipelineStore = defineStore('pipeline', () => {
     }
   };
 
-  const updatePipeline = async (id: string, pipelineData: Partial<Pipeline>): Promise<Pipeline | null> => {
+  const updatePipeline = async (id: string, pipelineData: Partial<IPipeline>): Promise<IPipeline | null> => {
     state.value.loading = true;
     state.value.error = null;
 
@@ -130,7 +117,6 @@ export const usePipelineStore = defineStore('pipeline', () => {
         state.value.currentPipeline = pipelineModel;
       }
 
-      // Сохраняем обновленный список в localStorage
       localStorage.setItem('crm_pipelines_data', JSON.stringify(state.value.pipelines));
 
       return pipelineModel;
@@ -156,7 +142,6 @@ export const usePipelineStore = defineStore('pipeline', () => {
         state.value.currentPipeline = null;
       }
 
-      // Сохраняем обновленный список в localStorage
       localStorage.setItem('crm_pipelines_data', JSON.stringify(state.value.pipelines));
 
       return true;
@@ -169,22 +154,19 @@ export const usePipelineStore = defineStore('pipeline', () => {
     }
   };
 
-  const setCurrentPipeline = (pipeline: Pipeline | null) => {
+  const setCurrentPipeline = (pipeline: IPipeline | null) => {
     state.value.currentPipeline = pipeline;
   };
 
   return {
-    // State
     ...state.value,
 
-    // Getters
     allPipelines,
     pipelineById,
     pipelineCount,
     isLoading,
     error,
 
-    // Actions
     fetchPipelines,
     fetchPipelineById,
     createPipeline,

@@ -91,10 +91,10 @@ import { useRouter, useRoute } from 'vue-router';
 import { useDealStore } from '@/entities/deal/store/deal.store';
 import { useCustomerStore } from '@/entities/customer/store/customer.store';
 import { usePipelineStore } from '@/entities/pipeline/store/pipeline.store';
-import type { Deal, Customer, Pipeline } from '@/shared';
 import Button from '@/shared/ui/Button.vue';
 import Modal from '@/shared/ui/Modal.vue';
 import DealForm from '@/features/deal-form/ui/DealForm.vue';
+import type { IDeal } from '@/interfaces/IDeal';
 
 // Stores
 const dealStore = useDealStore();
@@ -158,7 +158,7 @@ const deleteDeal = async () => {
   }
 };
 
-const handleEditSubmit = async (dealData: Partial<Deal>) => {
+const handleEditSubmit = async (dealData: Partial<IDeal>) => {
   const result = await dealStore.updateDeal(dealId.value, dealData);
   if (result) {
     showEditModal.value = false;
@@ -167,7 +167,6 @@ const handleEditSubmit = async (dealData: Partial<Deal>) => {
   }
 };
 
-// Initialize data
 onMounted(() => {
   dealStore.fetchDealById(dealId.value);
   customerStore.fetchCustomers();

@@ -20,8 +20,8 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: ` @use "@/shared/styles/variables.scss";
-                          @use "@/shared/styles/mixins.scss";`
+        additionalData: ` @use "@/assets/styles/variables.scss";
+                          @use "@/assets/styles/mixins.scss";`
       }
     }
   },
@@ -29,4 +29,13 @@ export default defineConfig({
     __VUE_OPTIONS_API__: true,
     __VUE_PROD_DEVTOOLS__: false,
   },
+  // Добавляем настройки для CSP, чтобы избежать проблем при сборке
+  build: {
+    rollupOptions: {
+      output: {
+        // Убедимся, что CSP-политика не добавляется неправильно
+        manualChunks: undefined,
+      }
+    }
+  }
 })
