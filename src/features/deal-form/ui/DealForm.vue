@@ -245,10 +245,8 @@ const dealSchema = yup.object({
   closeDate: yup.date()
 });
 
-// Loading state
 const isSubmitting = ref(false);
 
-// Initial form data
 const initialFormData = computed(() => {
   if (props.initialData) {
     return {
@@ -275,9 +273,7 @@ const initialFormData = computed(() => {
   };
 });
 
-// Initialize form data
 const formData = ref({ ...initialFormData.value });
-// Используем useForm для управления формой
 const { handleSubmit, setValues, values } = useForm({
   validationSchema: dealSchema,
   initialValues: initialFormData.value
@@ -287,21 +283,18 @@ const onSubmit = (values: any) => {
   isSubmitting.value = true;
 
   try {
-    // Убедимся, что pipelineId установлен, если он не был выбран пользователем
     const formData = {
       ...values,
       pipelineId: values.pipelineId || (pipelines.value.length === 1 ? pipelines.value[0]?.id : '')
     };
 
     if (isEdit.value && props.initialData?.id) {
-      // For edit, include the ID in the partial update
       const updateData = {
         ...formData,
         id: props.initialData.id
       } as Partial<IDeal> & { id: string };
       emit('submit', updateData);
     } else {
-      // For create, exclude ID
       const createData = {
         ...formData
       } as Omit<IDeal, 'id' | 'createdAt' | 'updatedAt'>;

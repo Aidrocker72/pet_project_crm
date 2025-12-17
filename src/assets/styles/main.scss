@@ -1,15 +1,22 @@
 @use './reset.scss';
 
-@use '../../pages/styles/deals-page.scss';
-@use '../../pages/styles/customers-page.scss';
-@use '../../pages/styles/dashboard-page';
-@use '../../pages/styles/pipeline-board-page.scss';
+@use './ui/button.scss';
+@use './ui/input.scss';
+@use './ui/modal.scss';
 
-@use '../../features/deal-form/styles/deal-form.scss';
-@use '../../features/customer-form/styles/customer-form.scss';
-@use '../../features//pipeline-board/styles/pipeline-board.scss';
+@use './pages/deals-page.scss';
+@use './pages/customers-page.scss';
+@use './pages/customer-details-page.scss';
+@use './pages/dashboard-page.scss';
+@use './pages/deal-details-page.scss';
+@use './pages/pipeline-board-page.scss';
 
-// global
+@use './deal-form.scss';
+@use './customer-form.scss';
+@use './pipeline-board.scss';
+
+@use './views/about-view.scss';
+
 .app {
   min-height: 100vh;
  display: flex;

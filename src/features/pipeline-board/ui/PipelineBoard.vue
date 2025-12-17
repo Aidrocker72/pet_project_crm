@@ -170,7 +170,3 @@ onMounted(() => {
   refreshData();
 });
 </script>
-
-<style scoped>
-@import '../styles/pipeline-board.scss';
-</style>

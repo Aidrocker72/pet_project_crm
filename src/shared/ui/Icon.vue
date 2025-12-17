@@ -14,11 +14,3 @@ withDefaults(defineProps<IIconProps>(), {
   className: ''
 });
 </script>
-
-<style scoped>
-.crm-icon {
-  display: inline-block;
-  vertical-align: middle;
-  fill: currentColor;
-}
-</style>

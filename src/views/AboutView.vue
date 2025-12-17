@@ -56,10 +56,4 @@
   </div>
 </template>
 
-<script setup lang="ts">
-// Компонент "О приложении" - информационная страница
-</script>
-
-<style scoped>
-@import './styles/about-view.scss';
-</style>
+<script setup lang="ts" />
