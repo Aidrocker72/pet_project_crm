@@ -5,27 +5,27 @@ import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
+import apiClient from './api/api'
 
 const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
 
+app.provide('apiClient', apiClient)
+
 app.mount('#app')
 
-// Загрузка SVG спрайта
+
 fetch('/icons/sprite.svg')
   .then(response => response.text())
   .then(data => {
-    // Создаем временный div для парсинга SVG
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = data;
 
-    // Находим SVG элемент и безопасно добавляем его в DOM
     const svgElement = tempDiv.querySelector('svg');
     if (svgElement) {
       svgElement.style.display = 'none';
-      // Добавляем в #app вместо document.body, чтобы избежать проблем с CSP
       const appElement = document.getElementById('app');
       if (appElement) {
         appElement.appendChild(svgElement);
