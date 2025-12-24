@@ -4,8 +4,6 @@ import { LOCAL_STORAGE_KEYS } from '@/constants/local-storage-keys';
 import type { IPipeline } from '@/interfaces/IPipeline';
 
 class PipelineApi {
-  private baseUrl = '/api/pipelines';
-
   private readonly STORAGE_KEY = LOCAL_STORAGE_KEYS.PIPELINES;
 
   private pipelines: IPipeline[] = this.loadFromStorage();

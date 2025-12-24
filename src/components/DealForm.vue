@@ -1,5 +1,5 @@
 <template>
-  <Form @submit="onSubmit" :validation-schema="dealSchema" :initial-values="initialFormData" class="crm-deal-form">
+  <Form @submit="onSubmit" :validation-schema="DEALS_VALIDATION_SCHEMA" :initial-values="initialData || undefined" class="crm-deal-form">
     <div class="crm-deal-form__field">
       <Field
         id="deal-title"
@@ -192,91 +192,30 @@ import Input from '@/components/ui/Input.vue';
 import Button from '@/components/ui/Button.vue';
 import type { IDeal } from '@/interfaces/IDeal';
 import type { IPipelineStage } from '@/interfaces/IPipelineStage';
+import { DEALS_VALIDATION_SCHEMA } from '@/constants/deals-validation';
+import type { IDealFormProps } from '@/interfaces/props/IDealFormProps';
+import type { IDealFormEmits } from '@/interfaces/emits/IDealFormEmits';
 
-interface DealFormEmits {
-  submit: [deal: Omit<IDeal, 'id' | 'createdAt' | 'updatedAt'> | Partial<IDeal>];
-  cancel: [];
-}
-
-interface DealFormProps {
-  initialData?: IDeal | null;
-}
-
-const props = withDefaults(defineProps<DealFormProps>(), {
+const props = withDefaults(defineProps<IDealFormProps>(), {
   initialData: null
 });
+const emit = defineEmits<IDealFormEmits>();
 
-const emit = defineEmits<DealFormEmits>();
-
-const isEdit = computed(() => !!props.initialData?.id);
-
-// Stores
 const customerStore = useCustomerStore();
 const pipelineStore = usePipelineStore();
 
-// Computed properties
+const isSubmitting = ref(false);
+
 const customers = computed(() => customerStore.allCustomers);
 const pipelines = computed(() => pipelineStore.allPipelines);
-
+const isEdit = computed(() => !!props.initialData?.id);
 const currentPipelineStages = computed<IPipelineStage[]>(() => {
- // Определяем ID воронки: из начальных данных или автоматически, если доступна только одна воронка
- const pipelineId = props.initialData?.pipelineId ||
-                    (pipelines.value.length === 1 ? pipelines.value[0]?.id : null);
+ const pipelineId = props.initialData?.pipelineId || (pipelines.value.length === 1 ? pipelines.value[0]?.id : null);
 
   if (!pipelineId) return [];
 
   const pipeline = pipelineStore.pipelineById(pipelineId);
   return pipeline ? pipeline.stages : [];
-});
-
-// Schema for validation
-const dealSchema = yup.object({
-  title: yup.string().required('Название обязательно').min(2, 'Название должно содержать не менее 2 символов'),
-  description: yup.string(),
-  customerId: yup.string().required('Клиент обязателен'),
-  pipelineId: yup.string().when([], {
-    is: () => pipelines.value.length > 1,
-    then: (schema) => schema.required('Воронка обязательна'),
-    otherwise: (schema) => schema,
-  }),
-  stageId: yup.string().required('Этап обязателен'),
-  value: yup.number().positive('Сумма должна быть положительной').required('Сумма обязательна'),
-  probability: yup.number().min(0, 'Вероятность не может быть меньше 0').max(100, 'Вероятность не может быть больше 100').required('Вероятность обязательна'),
-  closeDate: yup.date()
-});
-
-const isSubmitting = ref(false);
-
-const initialFormData = computed(() => {
-  if (props.initialData) {
-    return {
-      title: props.initialData.title,
-      description: props.initialData.description,
-      customerId: props.initialData.customerId,
-      pipelineId: props.initialData.pipelineId,
-      stageId: props.initialData.stageId,
-      value: props.initialData.value,
-      probability: props.initialData.probability,
-      closeDate: props.initialData.closeDate,
-    };
-  }
-
-  return {
-    title: '',
-    description: undefined,
-    customerId: '',
-    pipelineId: pipelines.value.length === 1 ? (pipelines.value[0]?.id || '') : '',
-    stageId: '',
-    value: 0,
-    probability: 0,
-    closeDate: undefined
-  };
-});
-
-const formData = ref({ ...initialFormData.value });
-const { handleSubmit, setValues, values } = useForm({
-  validationSchema: dealSchema,
-  initialValues: initialFormData.value
 });
 
 const onSubmit = (values: any) => {
