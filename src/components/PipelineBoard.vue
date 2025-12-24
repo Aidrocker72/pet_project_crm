@@ -137,7 +137,7 @@ const refreshData = async () => {
   }
 };
 
-const onMove = (event: any) => {
+const onMove = () => {
   return true;
 };
 
@@ -150,17 +150,6 @@ watch(() => dealsByStageRef.value, (newVal: Record<string, IDeal[]>) => {
     });
   });
 }, { deep: true });
-
-const onStageChange = async (event: any, stageId: string) => {
-  if (event?.added) {
-    const { element: deal } = event.added;
-    const updatedDeal = await dealStore.updateDeal(deal.id, { stageId });
-
-    if (!updatedDeal) {
-      error.value = 'Failed to update deal stage';
-    }
-  }
-};
 
 const onDealClick = (deal: IDeal) => {
   console.log('Deal clicked:', deal);

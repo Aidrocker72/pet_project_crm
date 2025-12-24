@@ -1,5 +1,5 @@
 <template>
-  <Form @submit="onSubmit" :validation-schema="customerSchema" :initial-values="initialValues" class="crm-customer-form">
+  <Form @submit="onSubmit" :validation-schema="CUSTOMER_VALIDATION_SCHEMA" :initial-values="initialData || undefined" class="crm-customer-form">
     <div class="crm-customer-form__field">
       <Field
         id="customer-name"
@@ -50,6 +50,7 @@
           type="tel"
           placeholder="Введите номер телефона клиента"
           :class="{ 'crm-input--error': !meta.valid && meta.touched }"
+          required
         />
       </Field>
       <ErrorMessage name="phone" class="crm-customer-form__error" />
@@ -128,15 +129,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed } from 'vue';
 import { Form, Field, ErrorMessage } from 'vee-validate';
-import * as yup from 'yup';
-import { useCustomerStore } from '@/store/customer.store';
 import Input from '@/components/ui/Input.vue';
 import Button from '@/components/ui/Button.vue';
 import type { ICustomerFormProps } from '@/interfaces/props/ICustomerFormProps';
 import type { ICustomerFormEmits } from '@/interfaces/emits/ICustomerFormEmits';
 import type { ICustomer } from '@/interfaces/ICustomer';
+import { CUSTOMER_VALIDATION_SCHEMA } from '@/constants/customer-validation';
 
 const props = withDefaults(defineProps<ICustomerFormProps>(), {
   initialData: null
@@ -146,40 +146,7 @@ const emit = defineEmits<ICustomerFormEmits>();
 
 const isEdit = computed(() => !!props.initialData?.id);
 
-const customerStore = useCustomerStore();
-
-const customerSchema = yup.object({
-  name: yup.string().required('Имя обязательно').min(2, 'Имя должно содержать не менее 2 символов'),
-  email: yup.string().email('Пожалуйста, введите действительный email').required('Email обязателен'),
-  phone: yup.string().matches(/^\+?[\d\s\-\(\)]+$|^/, 'Пожалуйста, введите действительный номер телефона').nullable(),
-  company: yup.string(),
-  position: yup.string(),
-  notes: yup.string()
-});
-
 const isSubmitting = ref(false);
-
-const initialValues = computed(() => {
-  if (props.initialData) {
-    return {
-      name: props.initialData.name,
-      email: props.initialData.email,
-      phone: props.initialData.phone,
-      company: props.initialData.company,
-      position: props.initialData.position,
-      notes: props.initialData.notes
-    };
-  }
-
-  return {
-    name: '',
-    email: '',
-    phone: '',
-    company: '',
-    position: '',
-    notes: ''
-  };
-});
 
 const onSubmit = (values: any) => {
   isSubmitting.value = true;

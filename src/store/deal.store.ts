@@ -52,6 +52,10 @@ export const useDealStore = defineStore('deal', () => {
     }
   };
 
+  const setDeals = (deals: IDeal[]): void => {
+    state.value.deals = deals.map(d => new DealModel(d));
+  };
+
   const fetchDealById = async (id: string): Promise<IDeal | null> => {
     state.value.loading = true;
     state.value.error = null;
