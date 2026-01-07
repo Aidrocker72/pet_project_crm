@@ -4,6 +4,8 @@ import { CustomerModel } from '@/class/models/customer.model';
 import { customerApi } from '@/api/customer.api';
 import type { ICustomerState } from '@/interfaces/store/ICustomerState';
 import type { ICustomer } from '@/interfaces/ICustomer';
+import { LOCAL_STORAGE_KEYS } from '@/constants/local-storage-keys';
+import { getFromLocalStorage, saveToLocalStorage } from '@/utils/local-storage.util';
 
 export const useCustomerStore = defineStore('customer', () => {
   const state = ref<ICustomerState>({
@@ -26,13 +28,13 @@ export const useCustomerStore = defineStore('customer', () => {
     state.value.error = null;
 
     try {
-      const storedCustomers = localStorage.getItem('crm_customers_data');
+      const storedCustomers = getFromLocalStorage(LOCAL_STORAGE_KEYS.CUSTOMERS, null);
       if (storedCustomers) {
         state.value.customers = JSON.parse(storedCustomers).map((c: any) => new CustomerModel(c));
       } else {
         const customers = await customerApi.getAllCustomers();
         state.value.customers = customers.map(c => new CustomerModel(c));
-        localStorage.setItem('crm_customers_data', JSON.stringify(state.value.customers));
+        saveToLocalStorage(LOCAL_STORAGE_KEYS.CUSTOMERS, state.value.customers);
       }
     } catch (err: any) {
       state.value.error = err.message || 'Failed to fetch customers';
@@ -41,6 +43,35 @@ export const useCustomerStore = defineStore('customer', () => {
       state.value.loading = false;
     }
   };
+
+  const setCustomers = (items: ICustomer[]): void => {
+    state.value.customers = items;
+  };
+
+  const setCurrentCustomer = (customer: ICustomer | null) => {
+    state.value.currentCustomer = customer;
+  };
+
+  const getCustomerById = (id: string): ICustomer | null => {
+    return state.value.customers.find(el => el.id === id) || null;
+  };
+
+  const createCustomerEmpty = (customerData: Omit<ICustomer, 'id' | 'createdAt' | 'updatedAt'> | Partial<ICustomer>): void => {
+    const createdCustomer: ICustomer = {
+      id: Math.random().toString(36).substring(2, 9),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      name: customerData.name || '',
+      email: customerData.email || '',
+      phone: customerData.phone,
+      company: customerData.company,
+      position: customerData.position,
+      notes: customerData.notes
+    };
+
+    const customerModel = new CustomerModel(createdCustomer);
+    state.value.customers.push(customerModel);
+  }
 
   const fetchCustomerById = async (id: string): Promise<ICustomer | null> => {
     state.value.loading = true;
@@ -88,9 +119,9 @@ export const useCustomerStore = defineStore('customer', () => {
 
       const createdCustomer = await customerApi.createCustomer(validCustomerData);
       const customerModel = new CustomerModel(createdCustomer);
-      state.value.customers.push(customerModel);
 
-      localStorage.setItem('crm_customers_data', JSON.stringify(state.value.customers));
+      state.value.customers.push(customerModel);
+      saveToLocalStorage(LOCAL_STORAGE_KEYS.CUSTOMERS, state.value.customers);
 
       return customerModel;
     } catch (err: any) {
@@ -119,8 +150,7 @@ export const useCustomerStore = defineStore('customer', () => {
         state.value.currentCustomer = customerModel;
       }
 
-      localStorage.setItem('crm_customers_data', JSON.stringify(state.value.customers));
-
+      saveToLocalStorage(LOCAL_STORAGE_KEYS.CUSTOMERS, state.value.customers)
       return customerModel;
     } catch (err: any) {
       state.value.error = err.message || 'Failed to update customer';
@@ -143,8 +173,7 @@ export const useCustomerStore = defineStore('customer', () => {
       if (state.value.currentCustomer?.id === id) {
         state.value.currentCustomer = null;
       }
-
-      localStorage.setItem('crm_customers_data', JSON.stringify(state.value.customers));
+      saveToLocalStorage(LOCAL_STORAGE_KEYS.CUSTOMERS, state.value.customers)
 
       return true;
     } catch (err: any) {
@@ -156,9 +185,7 @@ export const useCustomerStore = defineStore('customer', () => {
     }
   };
 
-  const setCurrentCustomer = (customer: ICustomer | null) => {
-    state.value.currentCustomer = customer;
-  };
+
 
   return {
     ...state.value,
@@ -174,6 +201,7 @@ export const useCustomerStore = defineStore('customer', () => {
     createCustomer,
     updateCustomer,
     deleteCustomer,
-    setCurrentCustomer
+    setCurrentCustomer,
+    setCustomers
   };
 });

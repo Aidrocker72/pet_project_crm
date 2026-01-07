@@ -2,8 +2,10 @@
  * Утилиты для работы с localStorage
  */
 
+import { API_CONSTANTS } from "./api.constants";
+
 export const LOCAL_STORAGE_KEYS = {
-  CUSTOMERS: 'crm_customers_data',
-  DEALS: 'crm_deals_data',
-  PIPELINES: 'crm_pipelines_data',
+  CUSTOMERS: API_CONSTANTS.CUSTOMER_STORAGE_KEY,
+  DEALS: API_CONSTANTS.DEAL_STORAGE_KEY,
+  PIPELINES: API_CONSTANTS.PIPELINE_STORAGE_KEY,
 };

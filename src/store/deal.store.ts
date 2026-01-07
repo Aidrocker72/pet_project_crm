@@ -4,6 +4,8 @@ import { DealModel } from '@/class/models/deal.model';
 import { dealApi } from '@/api/deal.api';
 import type { IDealState } from '@/interfaces/store/IDealState';
 import type { IDeal } from '@/interfaces/IDeal';
+import { LOCAL_STORAGE_KEYS } from '@/constants/local-storage-keys';
+import { getFromLocalStorage, saveToLocalStorage } from '@/utils/local-storage.util';
 
 
 export const useDealStore = defineStore('deal', () => {
@@ -36,13 +38,15 @@ export const useDealStore = defineStore('deal', () => {
     state.value.error = null;
 
     try {
-      const storedDeals = localStorage.getItem('crm_deals_data');
+      const storedDeals = getFromLocalStorage(LOCAL_STORAGE_KEYS.DEALS, null);
       if (storedDeals) {
         state.value.deals = JSON.parse(storedDeals).map((d: any) => new DealModel(d));
       } else {
         const deals = await dealApi.getAllDeals();
+
         state.value.deals = deals.map(d => new DealModel(d));
-        localStorage.setItem('crm_deals_data', JSON.stringify(state.value.deals));
+        saveToLocalStorage(LOCAL_STORAGE_KEYS.DEALS, state.value.deals);
+
       }
     } catch (err: any) {
       state.value.error = err.message || 'Failed to fetch deals';
@@ -108,8 +112,7 @@ export const useDealStore = defineStore('deal', () => {
       state.value.deals.push(dealModel);
 
       // Сохраняем обновленный список в localStorage
-      localStorage.setItem('crm_deals_data', JSON.stringify(state.value.deals));
-
+      saveToLocalStorage(LOCAL_STORAGE_KEYS.DEALS, state.value.deals);
       return dealModel;
     } catch (err: any) {
       state.value.error = err.message || 'Failed to create deal';
@@ -137,7 +140,7 @@ export const useDealStore = defineStore('deal', () => {
         state.value.currentDeal = dealModel;
       }
 
-      localStorage.setItem('crm_deals_data', JSON.stringify(state.value.deals));
+      saveToLocalStorage(LOCAL_STORAGE_KEYS.DEALS, state.value.deals);
 
       return dealModel;
     } catch (err: any) {
@@ -162,7 +165,7 @@ export const useDealStore = defineStore('deal', () => {
         state.value.currentDeal = null;
       }
 
-      localStorage.setItem('crm_deals_data', JSON.stringify(state.value.deals));
+      saveToLocalStorage(LOCAL_STORAGE_KEYS.DEALS, state.value.deals);
 
       return true;
     } catch (err: any) {

@@ -4,6 +4,8 @@ import { PipelineModel } from '@/class/models/pipeline.model';
 import { pipelineApi } from '@/api/pipeline.api';
 import type { IPipelineState } from '@/interfaces/store/IPipelineState';
 import type { IPipeline } from '@/interfaces/IPipeline';
+import { LOCAL_STORAGE_KEYS } from '@/constants/local-storage-keys';
+import { getFromLocalStorage, saveToLocalStorage } from '@/utils/local-storage.util';
 
 
 export const usePipelineStore = defineStore('pipeline', () => {
@@ -27,13 +29,13 @@ export const usePipelineStore = defineStore('pipeline', () => {
     state.value.error = null;
 
     try {
-      const storedPipelines = localStorage.getItem('crm_pipelines_data');
+      const storedPipelines = getFromLocalStorage(LOCAL_STORAGE_KEYS.PIPELINES, null);
       if (storedPipelines) {
         state.value.pipelines = JSON.parse(storedPipelines).map((p: any) => new PipelineModel(p));
       } else {
         const pipelines = await pipelineApi.getAllPipelines();
         state.value.pipelines = pipelines.map(p => new PipelineModel(p));
-        localStorage.setItem('crm_pipelines_data', JSON.stringify(state.value.pipelines));
+        saveToLocalStorage(LOCAL_STORAGE_KEYS.PIPELINES, state.value.pipelines);
       }
     } catch (err: any) {
       state.value.error = err.message || 'Failed to fetch pipelines';
@@ -88,7 +90,7 @@ export const usePipelineStore = defineStore('pipeline', () => {
       const pipelineModel = new PipelineModel(createdPipeline);
       state.value.pipelines.push(pipelineModel);
 
-      localStorage.setItem('crm_pipelines_data', JSON.stringify(state.value.pipelines));
+      saveToLocalStorage(LOCAL_STORAGE_KEYS.PIPELINES, state.value.pipelines);
 
       return pipelineModel;
     } catch (err: any) {
@@ -117,7 +119,7 @@ export const usePipelineStore = defineStore('pipeline', () => {
         state.value.currentPipeline = pipelineModel;
       }
 
-      localStorage.setItem('crm_pipelines_data', JSON.stringify(state.value.pipelines));
+      saveToLocalStorage(LOCAL_STORAGE_KEYS.PIPELINES, state.value.pipelines);
 
       return pipelineModel;
     } catch (err: any) {
@@ -142,7 +144,7 @@ export const usePipelineStore = defineStore('pipeline', () => {
         state.value.currentPipeline = null;
       }
 
-      localStorage.setItem('crm_pipelines_data', JSON.stringify(state.value.pipelines));
+      saveToLocalStorage(LOCAL_STORAGE_KEYS.PIPELINES, state.value.pipelines);
 
       return true;
     } catch (err: any) {

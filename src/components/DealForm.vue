@@ -184,7 +184,7 @@
 
 <script setup lang="ts">
 import { ref, computed} from 'vue';
-import { Form, Field, ErrorMessage, useForm } from 'vee-validate';
+import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 import { useCustomerStore } from '@/store/customer.store';
 import { usePipelineStore } from '@/store/pipeline.store';
