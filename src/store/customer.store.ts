@@ -28,9 +28,10 @@ export const useCustomerStore = defineStore('customer', () => {
     state.value.error = null;
 
     try {
-      const storedCustomers = getFromLocalStorage(LOCAL_STORAGE_KEYS.CUSTOMERS, null);
-      if (storedCustomers) {
-        state.value.customers = JSON.parse(storedCustomers).map((c: any) => new CustomerModel(c));
+      const storedCustomers = getFromLocalStorage<ICustomer[] | null>(LOCAL_STORAGE_KEYS.CUSTOMERS, null);
+
+      if (storedCustomers && storedCustomers.length) {
+        state.value.customers = storedCustomers.map((c: any) => new CustomerModel(c));
       } else {
         const customers = await customerApi.getAllCustomers();
         state.value.customers = customers.map(c => new CustomerModel(c));
@@ -38,7 +39,6 @@ export const useCustomerStore = defineStore('customer', () => {
       }
     } catch (err: any) {
       state.value.error = err.message || 'Failed to fetch customers';
-      console.error('Error fetching customers:', err);
     } finally {
       state.value.loading = false;
     }

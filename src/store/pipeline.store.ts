@@ -29,9 +29,9 @@ export const usePipelineStore = defineStore('pipeline', () => {
     state.value.error = null;
 
     try {
-      const storedPipelines = getFromLocalStorage(LOCAL_STORAGE_KEYS.PIPELINES, null);
+      const storedPipelines = getFromLocalStorage<IPipeline[] | null>(LOCAL_STORAGE_KEYS.PIPELINES, null);
       if (storedPipelines) {
-        state.value.pipelines = JSON.parse(storedPipelines).map((p: any) => new PipelineModel(p));
+        state.value.pipelines = storedPipelines.map((p: any) => new PipelineModel(p));
       } else {
         const pipelines = await pipelineApi.getAllPipelines();
         state.value.pipelines = pipelines.map(p => new PipelineModel(p));

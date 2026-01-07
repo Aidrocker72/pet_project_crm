@@ -38,9 +38,9 @@ export const useDealStore = defineStore('deal', () => {
     state.value.error = null;
 
     try {
-      const storedDeals = getFromLocalStorage(LOCAL_STORAGE_KEYS.DEALS, null);
+      const storedDeals = getFromLocalStorage<IDeal[] | null>(LOCAL_STORAGE_KEYS.DEALS, null);
       if (storedDeals) {
-        state.value.deals = JSON.parse(storedDeals).map((d: any) => new DealModel(d));
+        state.value.deals = storedDeals.map((d: any) => new DealModel(d));
       } else {
         const deals = await dealApi.getAllDeals();
 

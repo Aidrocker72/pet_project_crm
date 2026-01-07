@@ -183,4 +183,50 @@
   top: 0;
   left: 0;
   width: 100%;
+// Удаляем лишнюю скобку
+}
+
+// Адаптивность для доски воронки
+@media (max-width: 768px) {
+  .crm-pipeline-board {
+    padding: var(--crm-spacing-md);
+  }
+
+  .crm-pipeline-board__header {
+    flex-direction: column;
+    gap: var(--crm-spacing-md);
+    align-items: flex-start;
+  }
+
+  .crm-pipeline-board__stages {
+    flex-direction: column;
+    gap: var(--crm-spacing-md);
+  }
+
+  .crm-pipeline-board__stage {
+    min-width: 100%;
+    margin-bottom: var(--crm-spacing-md);
+  }
+
+  .crm-pipeline-board__deal-title {
+    font-size: var(--crm-font-size-base);
+  }
+
+  .crm-pipeline-board__deal-value {
+    font-size: var(--crm-font-size-base);
+  }
+}
+
+@media (max-width: 576px) {
+  .crm-pipeline-board {
+    padding: var(--crm-spacing-sm);
+  }
+
+  .crm-pipeline-board__title {
+    font-size: var(--crm-font-size-lg);
+  }
+
+  .crm-pipeline-board__stage-title {
+    font-size: var(--crm-font-size-base);
+  }
 }

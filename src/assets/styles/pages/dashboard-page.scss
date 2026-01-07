@@ -150,3 +150,62 @@
     font-style: italic;
   }
 }
+
+// Адаптивность для панели управления
+@media (max-width: 768px) {
+  .crm-dashboard-page {
+    padding: var(--padding-md, 16px);
+
+    &__header {
+      flex-direction: column;
+      gap: var(--spacing-md, 16px);
+      align-items: flex-start;
+    }
+
+    &__actions {
+      width: 100%;
+      justify-content: center;
+    }
+
+    &__stats {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-md, 16px);
+    }
+
+    .dashboard-content {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-lg, 24px);
+    }
+
+    .customer-item,
+    .deal-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-sm, 8px);
+    }
+
+    .customer-company,
+    .deal-value,
+    .deal-stage {
+      align-self: flex-end;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .crm-dashboard-page {
+    &__title {
+      font-size: var(--font-size-lg, 18px);
+    }
+
+    .stat-value {
+      font-size: var(--font-size-xl, 20px);
+    }
+
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-sm, 8px);
+    }
+  }
+}
