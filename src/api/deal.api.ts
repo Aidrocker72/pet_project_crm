@@ -4,8 +4,6 @@ import { LOCAL_STORAGE_KEYS } from '@/constants/local-storage-keys';
 import type { IDeal } from '@/interfaces/IDeal';
 
 class DealApi {
-  private baseUrl = '/api/deals';
-
   private readonly STORAGE_KEY = LOCAL_STORAGE_KEYS.DEALS;
 
   private deals: IDeal[] = this.loadFromStorage();
@@ -16,10 +14,6 @@ class DealApi {
 
   private saveToStorage(): void {
     saveToLocalStorage(this.STORAGE_KEY, this.deals);
-  }
-
-  private updateStorage(): void {
-    this.saveToStorage();
   }
 
   async getAllDeals(): Promise<IDeal[]> {

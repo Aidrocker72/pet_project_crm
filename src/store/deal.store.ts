@@ -65,7 +65,7 @@ export const useDealStore = defineStore('deal', () => {
     state.value.error = null;
 
     try {
-      const deal = await dealApi.getDealById(id);
+      const deal = state.value.deals.find(el => el.id === id);
       const dealModel = new DealModel(deal);
 
       const existingIndex = state.value.deals.findIndex(d => d.id === id);
@@ -107,11 +107,18 @@ export const useDealStore = defineStore('deal', () => {
         status: dealData.status || 'open'
       } as Omit<IDeal, 'id' | 'createdAt' | 'updatedAt'>;
 
-      const createdDeal = await dealApi.createDeal(validDealData);
-      const dealModel = new DealModel(createdDeal);
+      const newDeal = {
+        id: Math.random().toString(36).substring(2, 9),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        description: undefined,
+        closeDate: undefined,
+        ...validDealData
+      };
+
+      const dealModel = new DealModel(newDeal);
       state.value.deals.push(dealModel);
 
-      // Сохраняем обновленный список в localStorage
       saveToLocalStorage(LOCAL_STORAGE_KEYS.DEALS, state.value.deals);
       return dealModel;
     } catch (err: any) {
@@ -128,10 +135,24 @@ export const useDealStore = defineStore('deal', () => {
     state.value.error = null;
 
     try {
-      const updatedDeal = await dealApi.updateDeal(id, dealData);
+      const index = state.value.deals.findIndex(d => d.id === id);
+      const existingDeal = state.value.deals[index];
+
+      const updatedDeal = {
+        ...existingDeal,
+        ...dealData,
+        id: existingDeal!.id,
+        title: dealData.title ?? existingDeal!.title,
+        customerId: dealData.customerId ?? existingDeal!.customerId,
+        pipelineId: dealData.pipelineId ?? existingDeal!.pipelineId,
+        stageId: dealData.stageId ?? existingDeal!.stageId,
+        createdAt: existingDeal!.createdAt,
+        updatedAt: new Date().toISOString()
+      };
+
       const dealModel = new DealModel(updatedDeal);
 
-      const index = state.value.deals.findIndex(d => d.id === id);
+
       if (index !== -1) {
         state.value.deals[index] = dealModel;
       }
@@ -157,8 +178,6 @@ export const useDealStore = defineStore('deal', () => {
     state.value.error = null;
 
     try {
-      await dealApi.deleteDeal(id);
-
       state.value.deals = state.value.deals.filter(d => d.id !== id);
 
       if (state.value.currentDeal?.id === id) {
@@ -198,6 +217,7 @@ export const useDealStore = defineStore('deal', () => {
     createDeal,
     updateDeal,
     deleteDeal,
-    setCurrentDeal
+    setCurrentDeal,
+    setDeals,
   };
 });

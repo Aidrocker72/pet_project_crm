@@ -52,33 +52,13 @@ export const useCustomerStore = defineStore('customer', () => {
     state.value.currentCustomer = customer;
   };
 
-  const getCustomerById = (id: string): ICustomer | null => {
-    return state.value.customers.find(el => el.id === id) || null;
-  };
-
-  const createCustomerEmpty = (customerData: Omit<ICustomer, 'id' | 'createdAt' | 'updatedAt'> | Partial<ICustomer>): void => {
-    const createdCustomer: ICustomer = {
-      id: Math.random().toString(36).substring(2, 9),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      name: customerData.name || '',
-      email: customerData.email || '',
-      phone: customerData.phone,
-      company: customerData.company,
-      position: customerData.position,
-      notes: customerData.notes
-    };
-
-    const customerModel = new CustomerModel(createdCustomer);
-    state.value.customers.push(customerModel);
-  }
-
   const fetchCustomerById = async (id: string): Promise<ICustomer | null> => {
     state.value.loading = true;
     state.value.error = null;
 
     try {
-      const customer = await customerApi.getCustomerById(id);
+
+      const customer = state.value.customers.find(el => el.id === id)
       const customerModel = new CustomerModel(customer);
 
       const existingIndex = state.value.customers.findIndex(c => c.id === id);
@@ -117,10 +97,16 @@ export const useCustomerStore = defineStore('customer', () => {
         notes: customerData.notes
       } as Omit<ICustomer, 'id' | 'createdAt' | 'updatedAt'>;
 
-      const createdCustomer = await customerApi.createCustomer(validCustomerData);
-      const customerModel = new CustomerModel(createdCustomer);
+      const newCustomer = {
+        id: Math.random().toString(36).substring(2, 9),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        ...validCustomerData
+      }
 
-      state.value.customers.push(customerModel);
+      const customerModel = new CustomerModel(newCustomer);
+      state.value.customers.push(customerModel as ICustomer);
+
       saveToLocalStorage(LOCAL_STORAGE_KEYS.CUSTOMERS, state.value.customers);
 
       return customerModel;
@@ -138,10 +124,23 @@ export const useCustomerStore = defineStore('customer', () => {
     state.value.error = null;
 
     try {
-      const updatedCustomer = await customerApi.updateCustomer(id, customerData);
-      const customerModel = new CustomerModel(updatedCustomer);
-
       const index = state.value.customers.findIndex(c => c.id === id);
+      const existingCustomer = state.value.customers[index];
+
+       const updatedCustomer = {
+        ...existingCustomer,
+        ...customerData,
+        id: existingCustomer!.id,
+        name: customerData.name ?? existingCustomer!.name,
+        email: customerData.email ?? existingCustomer!.email,
+        createdAt: existingCustomer!.createdAt,
+        updatedAt: new Date().toISOString()
+      };
+
+
+      const customerModel = new CustomerModel(updatedCustomer);
+      state.value.customers[index] = customerModel as ICustomer;
+
       if (index !== -1) {
         state.value.customers[index] = customerModel;
       }
@@ -166,8 +165,6 @@ export const useCustomerStore = defineStore('customer', () => {
     state.value.error = null;
 
     try {
-      await customerApi.deleteCustomer(id);
-
       state.value.customers = state.value.customers.filter(c => c.id !== id);
 
       if (state.value.currentCustomer?.id === id) {

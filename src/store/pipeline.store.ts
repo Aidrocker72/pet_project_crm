@@ -50,7 +50,7 @@ export const usePipelineStore = defineStore('pipeline', () => {
     state.value.error = null;
 
     try {
-      const pipeline = await pipelineApi.getPipelineById(id);
+      const pipeline = state.value.pipelines.find(el => el.id === id);
       const pipelineModel = new PipelineModel(pipeline);
 
       const existingIndex = state.value.pipelines.findIndex(p => p.id === id);
@@ -61,6 +61,7 @@ export const usePipelineStore = defineStore('pipeline', () => {
       }
 
       state.value.currentPipeline = pipelineModel;
+      saveToLocalStorage(LOCAL_STORAGE_KEYS.PIPELINES, state.value.pipelines);
       return pipelineModel;
     } catch (err: any) {
       state.value.error = err.message || 'Failed to fetch pipeline';
@@ -86,8 +87,15 @@ export const usePipelineStore = defineStore('pipeline', () => {
         stages: pipelineData.stages || []
       } as Omit<IPipeline, 'id' | 'createdAt' | 'updatedAt'>;
 
-      const createdPipeline = await pipelineApi.createPipeline(validPipelineData);
-      const pipelineModel = new PipelineModel(createdPipeline);
+      const newPipline = {
+        id: Math.random().toString(36).substring(2, 9),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        description: undefined,
+        ...validPipelineData
+      }
+
+      const pipelineModel = new PipelineModel(newPipline);
       state.value.pipelines.push(pipelineModel);
 
       saveToLocalStorage(LOCAL_STORAGE_KEYS.PIPELINES, state.value.pipelines);
@@ -107,10 +115,18 @@ export const usePipelineStore = defineStore('pipeline', () => {
     state.value.error = null;
 
     try {
-      const updatedPipeline = await pipelineApi.updatePipeline(id, pipelineData);
+      const index = state.value.pipelines.findIndex(el => el.id === id);
+      const existingPipeline = state.value.pipelines[index];
+      const updatedPipeline = {
+        ...existingPipeline,
+        ...pipelineData,
+        id: existingPipeline!.id,
+        name: pipelineData.name ?? existingPipeline!.name,
+        createdAt: existingPipeline!.createdAt,
+        updatedAt: new Date().toISOString()
+      };
       const pipelineModel = new PipelineModel(updatedPipeline);
 
-      const index = state.value.pipelines.findIndex(p => p.id === id);
       if (index !== -1) {
         state.value.pipelines[index] = pipelineModel;
       }
@@ -136,8 +152,6 @@ export const usePipelineStore = defineStore('pipeline', () => {
     state.value.error = null;
 
     try {
-      await pipelineApi.deletePipeline(id);
-
       state.value.pipelines = state.value.pipelines.filter(p => p.id !== id);
 
       if (state.value.currentPipeline?.id === id) {
