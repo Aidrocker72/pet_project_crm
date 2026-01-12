@@ -158,12 +158,4 @@ const closeDealModal = () => {
   showDealModal.value = false;
   editingDeal.value = null;
 };
-
-onMounted(async () => {
-  await Promise.all([
-    dealStore.fetchDeals(),
-    customerStore.fetchCustomers(),
-    pipelineStore.fetchPipelines()
-  ]);
-});
 </script>

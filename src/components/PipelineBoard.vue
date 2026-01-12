@@ -119,24 +119,6 @@ const getCustomerName = (customerId: string) => {
   return customer ? customer.name : 'Unknown Customer';
 };
 
-const refreshData = async () => {
-  loading.value = true;
-  error.value = null;
-
-  try {
-    await Promise.all([
-      dealStore.fetchDeals(),
-      customerStore.fetchCustomers(),
-      pipelineStore.fetchPipelines()
-    ]);
-  } catch (err: any) {
-    error.value = err.message || 'Failed to load data';
-    console.error('Error loading pipeline board data:', err);
-  } finally {
-    loading.value = false;
-  }
-};
-
 const onMove = () => {
   return true;
 };
@@ -155,7 +137,11 @@ const onDealClick = (deal: IDeal) => {
   console.log('Deal clicked:', deal);
 };
 
-onMounted(() => {
-  refreshData();
-});
+// onMounted(async () => {
+//   await Promise.all([
+//     dealStore.fetchDeals(),
+//     customerStore.fetchCustomers(),
+//     pipelineStore.fetchPipelines()
+//   ]);
+// });
 </script>

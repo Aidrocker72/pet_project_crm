@@ -182,12 +182,4 @@ const goToCustomerDetails = (id: string) => {
 const goToDealDetails = (id: string) => {
  router.push(`/deals/${id}`);
 };
-
-onMounted(async () => {
- await Promise.all([
-    customerStore.fetchCustomers(),
-    dealStore.fetchDeals(),
-    pipelineStore.fetchPipelines()
-  ]);
-});
 </script>

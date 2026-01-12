@@ -166,10 +166,4 @@ const handleEditSubmit = async (dealData: Partial<IDeal>) => {
     alert('Не удалось обновить сделку');
   }
 };
-
-onMounted(() => {
-  dealStore.fetchDealById(dealId.value);
-  customerStore.fetchCustomers();
-  pipelineStore.fetchPipelines();
-});
 </script>

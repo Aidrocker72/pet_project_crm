@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-</script>
-
 <template>
   <div class="app">
     <header class="app-header">
@@ -22,3 +18,24 @@ import { RouterLink, RouterView } from 'vue-router'
     </main>
   </div>
 </template>
+
+<script setup lang="ts">
+import { onMounted } from 'vue';
+import { RouterLink, RouterView } from 'vue-router'
+import { useDealStore } from '@/store/deal.store';
+import { useCustomerStore } from '@/store/customer.store';
+import { usePipelineStore } from '@/store/pipeline.store';
+
+const dealStore = useDealStore();
+const customerStore = useCustomerStore();
+const pipelineStore = usePipelineStore();
+
+onMounted(async () => {
+  await Promise.all([
+    dealStore.fetchDeals(),
+    customerStore.fetchCustomers(),
+    pipelineStore.fetchPipelines()
+  ]);
+});
+
+</script>
